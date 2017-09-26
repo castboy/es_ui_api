@@ -1,48 +1,21 @@
-package main 
+package main
 
 import (
-    "gopkg.in/olivere/elastic.v5"
-    "context"
-    "fmt"
+	"encoding/json"
+	"fmt"
+
+	"./modules"
+	_ "./modules"
+
+	//	"gopkg.in/olivere/elastic.v5"
 )
 
-var index = "forbin_index_create_auto"
-
-type Tweet struct {
-    User string
-    Message string
-}
-
 func main() {
-    ctx := context.Background()
-
-    client, err := elastic.NewClient(elastic.SetURL("http://10.88.1.102:9200"))
-    if err != nil {
-        fmt.Println("new client err")
-    }
-
-    exists, err := client.IndexExists(index).Do(ctx)
-    if err != nil {
-        fmt.Println("IndexExists() err")
-    }
-    if !exists {
-        _, err = client.CreateIndex(index).Do(ctx)
-        if err != nil {
-            fmt.Println("create index failed")
-        }
-    }
-
-    tweet := Tweet{User: "olivere", Message: "Take Five"}
-    _, err = client.Index().
-        Index("twitter").
-        Type("tweet").
-        //Id("1").
-        BodyJson(tweet).
-        Refresh("true").
-        Do(ctx)
-    if err != nil {
-        panic(err)
-    } else {
-        fmt.Println("create document ok")
-    }
+	b := []byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"], "Ha":{"Add":"ChanPing", "Tel":[123, 456]}}`)
+	var f interface{}
+	err := json.Unmarshal(b, &f)
+	if nil != err {
+		fmt.Println("json.Unmarshal Err")
+	}
+	modules.Parse(f)
 }
