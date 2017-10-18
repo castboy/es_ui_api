@@ -9,13 +9,17 @@ import (
 )
 
 type OtherConf struct {
-	Other string
+	ClientID string
+}
+
+type HttpConf struct {
+	Host string
+	Port int
+	Url  string
 }
 
 type Broker struct {
-	Host  string
-	Port  int
-	Url   string
+	Basic HttpConf
 	Other OtherConf
 }
 
@@ -25,16 +29,14 @@ type Client interface {
 
 func NewOtherConf(conf string) OtherConf {
 	return OtherConf{
-		Other: conf,
+		ClientID: conf,
 	}
 }
 
-func Dial(host string, port int, url string, conf OtherConf) (Broker, error) {
+func Dial(http HttpConf, other OtherConf) (Broker, error) {
 	broker := Broker{
-		Host:  host,
-		Port:  port,
-		Url:   url,
-		Other: conf,
+		Basic: http,
+		Other: other,
 	}
 	return broker, nil
 }
@@ -44,10 +46,10 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 }
 
 func (broker Broker) Listen() {
-	fmt.Println(broker.Other.Other)
+	fmt.Println(broker.Other.ClientID)
 
-	http.HandleFunc(broker.Url, HelloServer)
-	err := http.ListenAndServe(":"+strconv.Itoa(broker.Port), nil)
+	http.HandleFunc(broker.Basic.Url, HelloServer)
+	err := http.ListenAndServe(":"+strconv.Itoa(broker.Basic.Port), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

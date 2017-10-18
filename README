@@ -1,0 +1,22 @@
+//demo
+
+package main
+
+import (
+	"github.com/castboy/es_ui_api"
+	//	"fmt"
+)
+
+var cli es_ui_api.Client
+
+func main() {
+	basic := es_ui_api.HttpConf{"10.88.1.103", 8080, "/client"}
+	other := es_ui_api.NewOtherConf("NewOtherConf")
+
+	cli, err := es_ui_api.Dial(basic, other)
+	if nil != err {
+
+	}
+
+	cli.Listen()
+}
