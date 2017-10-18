@@ -2,10 +2,11 @@ package es_ui_api
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/castboy/es_ui_api/modules"
 )
 
 type OtherConf struct {
@@ -41,14 +42,10 @@ func Dial(http HttpConf, other OtherConf) (Broker, error) {
 	return broker, nil
 }
 
-func HelloServer(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "hello, world!\n")
-}
-
 func (broker Broker) Listen() {
 	fmt.Println(broker.Other.ClientID)
 
-	http.HandleFunc(broker.Basic.Url, HelloServer)
+	http.HandleFunc(broker.Basic.Url, modules.Server)
 	err := http.ListenAndServe(":"+strconv.Itoa(broker.Basic.Port), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
