@@ -11,14 +11,6 @@ import (
 )
 
 func IsNested(me *tree.Atomic) bool {
-	return false
-}
-
-func IsTerm(me *tree.Atomic) bool {
-	return false
-}
-
-func IsMatch(me *tree.Atomic) bool {
 	return true
 }
 
@@ -72,16 +64,38 @@ func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 
 func AtomicExpr(me *tree.Atomic) interface{} {
 	if IsNested(me) {
-		if IsTerm(me) {
+		switch me.Op {
+		case tree.OpGeEq:
+			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gte(me.V))
+		case tree.OpGe:
+			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gt(me.V))
+		case tree.OpLeEq:
+			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Lte(me.V))
+		case tree.OpLe:
+			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Lt(me.V))
+		case tree.OpEq:
 			return elastic.NewNestedQuery("xdr", elastic.NewTermQuery(me.K.Key, me.V))
-		} else {
+		case tree.OpInclude:
 			return elastic.NewNestedQuery("xdr", elastic.NewMatchQuery(me.K.Key, me.V))
+		case tree.OpNeq:
+			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gt(me.V).Lt(me.V))
 		}
 	} else {
-		if IsTerm(me) {
+		switch me.Op {
+		case tree.OpGeEq:
+			return elastic.NewRangeQuery(me.K.Key).Gte(me.V)
+		case tree.OpGe:
+			return elastic.NewRangeQuery(me.K.Key).Gt(me.V)
+		case tree.OpLeEq:
+			return elastic.NewRangeQuery(me.K.Key).Lte(me.V)
+		case tree.OpLe:
+			return elastic.NewRangeQuery(me.K.Key).Lt(me.V)
+		case tree.OpEq:
 			return elastic.NewTermQuery(me.K.Key, me.V)
-		} else {
+		case tree.OpInclude:
 			return elastic.NewMatchQuery(me.K.Key, me.V)
+		case tree.OpNeq:
+			return elastic.NewRangeQuery(me.K.Key).Gt(me.V).Lt(me.V)
 		}
 	}
 
@@ -105,7 +119,7 @@ func Tree() *tree.Expr {
 		})
 	}
 
-	line := `a1 && a2 && a3`
+	line := `a1 a2||a3 zone1="v1 \'v2\'"&&(obj1>=0&&(obj2>1||obj3<1)||!(obj4==0&&obj5==0))||(obj6<0&&obj7>0)`
 
 	return tree.LineExpr(line)
 }
