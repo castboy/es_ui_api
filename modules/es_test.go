@@ -22,27 +22,27 @@ func IsMatch(me *tree.Atomic) bool {
 	return true
 }
 
-var query = make([]elastic.Query, 0)
 var boolQuery *elastic.BoolQuery
 
-func Expr(expr *tree.Expr) *elastic.BoolQuery {
+func Expr(expr *tree.Expr) elastic.Query {
+	query := make([]elastic.Query, 0)
+
 	if expr.IsAtomic() {
 		exp := AtomicExpr(expr.Atomic)
 		switch e := exp.(type) {
 		case elastic.Query:
-			query = append(query, e)
+			return e
 		}
 	} else {
 		for _, v := range expr.Children {
-			e := Expr(v)
-			query = append(query, e)
+			query = append(query, Expr(v))
 		}
 	}
 
 	return BoolExpr(expr, query)
 }
 
-func BeJson(query *elastic.BoolQuery) {
+func BeJson(query elastic.Query) {
 	src, err := query.Source()
 	if err != nil {
 	}
@@ -105,7 +105,7 @@ func Tree() *tree.Expr {
 		})
 	}
 
-	line := `a1 && a2 || a3`
+	line := `a1 && a2 && a3`
 
 	return tree.LineExpr(line)
 }
