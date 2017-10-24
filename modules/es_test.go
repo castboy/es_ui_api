@@ -27,32 +27,35 @@ var boolQuery *elastic.BoolQuery
 
 func Expr(expr *tree.Expr) *elastic.BoolQuery {
 	if expr.IsAtomic() {
+		exp := AtomicExpr(expr.Atomic)
+		switch e := exp.(type) {
+		case elastic.Query:
+			query = append(query, e)
+		}
 	} else {
 		for _, v := range expr.Children {
-			expr := AtomicExpr(v.Atomic)
-			switch e := expr.(type) {
-			case elastic.Query:
-				query = append(query, e)
-			}
+			e := Expr(v)
+			query = append(query, e)
 		}
-		fmt.Println(expr.Logic)
-		boolQuery = boolExpr(expr, query)
-		src, err := boolQuery.Source()
-		if err != nil {
-		}
-
-		data, err := json.Marshal(src)
-		if err != nil {
-
-		}
-		s := string(data)
-		fmt.Println(s)
 	}
 
-	return nil
+	return BoolExpr(expr, query)
 }
 
-func boolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
+func BeJson(query *elastic.BoolQuery) {
+	src, err := query.Source()
+	if err != nil {
+	}
+
+	data, err := json.Marshal(src)
+	if err != nil {
+
+	}
+	s := string(data)
+	fmt.Println(s)
+}
+
+func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 	switch me.Logic {
 	case tree.LogicAnd:
 		return elastic.NewBoolQuery().Must(query...).MinimumShouldMatch("1")
@@ -60,6 +63,8 @@ func boolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 		return elastic.NewBoolQuery().Should(query...).MinimumShouldMatch("1")
 	case tree.LogicNot:
 		return elastic.NewBoolQuery().MustNot(query...).MinimumShouldMatch("1")
+	default:
+		return elastic.NewBoolQuery().Must(query...).MinimumShouldMatch("1")
 	}
 
 	return nil
@@ -100,11 +105,13 @@ func Tree() *tree.Expr {
 		})
 	}
 
-	line := `a1 && a2 && a3`
+	line := `a1 && a2 || a3`
 
 	return tree.LineExpr(line)
 }
 
 func Test1(t *testing.T) {
-	Expr(Tree())
+	tree := Tree()
+	expr := Expr(tree)
+	BeJson(expr)
 }
