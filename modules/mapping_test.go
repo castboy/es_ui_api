@@ -39,7 +39,7 @@ func Load(line string) {
 	case "all":
 		scope = tree.ScopeAll
 	case "zone":
-		scope = tree.ScopeAll
+		scope = tree.ScopeZone
 	case "object":
 		scope = tree.ScopeObject
 	default:

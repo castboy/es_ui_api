@@ -63,43 +63,34 @@ func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 }
 
 func AtomicExpr(me *tree.Atomic) interface{} {
-	if IsNested(me) {
-		switch me.Op {
-		case tree.OpGeEq:
-			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gte(me.V))
-		case tree.OpGe:
-			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gt(me.V))
-		case tree.OpLeEq:
-			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Lte(me.V))
-		case tree.OpLe:
-			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Lt(me.V))
-		case tree.OpEq:
-			return elastic.NewNestedQuery("xdr", elastic.NewTermQuery(me.K.Key, me.V))
-		case tree.OpInclude:
-			return elastic.NewNestedQuery("xdr", elastic.NewMatchQuery(me.K.Key, me.V))
-		case tree.OpNeq:
-			return elastic.NewNestedQuery("xdr", elastic.NewRangeQuery(me.K.Key).Gt(me.V).Lt(me.V))
+	var v elastic.Query
+
+	switch me.Op {
+	case tree.OpGeEq:
+		v = elastic.NewRangeQuery(me.K.Name).Gte(me.V)
+	case tree.OpGe:
+		v = elastic.NewRangeQuery(me.K.Name).Gt(me.V)
+	case tree.OpLeEq:
+		v = elastic.NewRangeQuery(me.K.Name).Lte(me.V)
+	case tree.OpLe:
+		v = elastic.NewRangeQuery(me.K.Name).Lt(me.V)
+	case tree.OpEq:
+		v = elastic.NewTermQuery(me.K.Name, me.V)
+	case tree.OpInclude:
+		if me.K.Scope == tree.ScopeAll {
+			v = elastic.NewMatchQuery("_all_", me.V)
+		} else {
+			v = elastic.NewMatchQuery(me.K.Name, me.V)
 		}
-	} else {
-		switch me.Op {
-		case tree.OpGeEq:
-			return elastic.NewRangeQuery(me.K.Key).Gte(me.V)
-		case tree.OpGe:
-			return elastic.NewRangeQuery(me.K.Key).Gt(me.V)
-		case tree.OpLeEq:
-			return elastic.NewRangeQuery(me.K.Key).Lte(me.V)
-		case tree.OpLe:
-			return elastic.NewRangeQuery(me.K.Key).Lt(me.V)
-		case tree.OpEq:
-			return elastic.NewTermQuery(me.K.Key, me.V)
-		case tree.OpInclude:
-			return elastic.NewMatchQuery(me.K.Key, me.V)
-		case tree.OpNeq:
-			return elastic.NewRangeQuery(me.K.Key).Gt(me.V).Lt(me.V)
-		}
+	case tree.OpNeq:
+		v = elastic.NewRangeQuery(me.K.Name).Gt(me.V).Lt(me.V)
 	}
 
-	return 0
+	if IsNested(me) {
+		v = elastic.NewNestedQuery("xdr", v)
+	}
+
+	return v
 }
 
 func Tree() *tree.Expr {
