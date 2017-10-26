@@ -5,7 +5,7 @@ import (
 )
 
 func InitLog() {
-	logger, err := seelog.LoggerFromConfigAsFile("seelog.xml")
+	logger, err := seelog.LoggerFromConfigAsFile(os.Getenv("GOPATH") + "/src/github.com/castboy/es_ui_api/modules/seelog.xml")
 
 	if err != nil {
 		seelog.Critical("err parsing config log file", err)
