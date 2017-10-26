@@ -11,7 +11,7 @@ func Tree2() *tree.Expr {
 		tree.RegisterKeyword(*v)
 	}
 
-	line := `a1 a2||a3 le>1||lv<1`
+	line := `a1 a2||a3 le!=1 || lv!=2 || lp!=4`
 
 	return tree.LineExpr(line)
 }

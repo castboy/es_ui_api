@@ -10,8 +10,14 @@ import (
 	"gopkg.in/olivere/elastic.v5"
 )
 
-func IsNested(me *tree.Atomic) bool {
-	return true
+func isInt(me *tree.Atomic) bool {
+	fmt.Println("me.K.Type:", me.K.Type)
+	return me.K.Type&1 != 0 //0非整数， 1整数
+}
+
+func isNested(me *tree.Atomic) bool {
+	me.K.Type >>= 1
+	return me.K.Type&1 != 0 //0非嵌套， 1嵌套
 }
 
 var boolQuery *elastic.BoolQuery
@@ -63,6 +69,7 @@ func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 }
 
 func AtomicExpr(me *tree.Atomic) interface{} {
+	fmt.Println("me.K", *me.K)
 	var v elastic.Query
 
 	switch me.Op {
@@ -83,10 +90,17 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 			v = elastic.NewMatchQuery(me.K.Name, me.V)
 		}
 	case tree.OpNeq:
-		v = elastic.NewRangeQuery(me.K.Name).Gt(me.V).Lt(me.V)
+		if isInt(me) {
+			fmt.Println("isInt")
+			v = elastic.NewRangeQuery(me.K.Name).Gt(me.V).Lt(me.V)
+		} else {
+			fmt.Println("isNotInt")
+			v = elastic.NewBoolQuery().MustNot(elastic.NewMatchQuery(me.K.Name, me.V))
+		}
 	}
-
-	if IsNested(me) {
+	fmt.Println("me.K", *me.K)
+	if isNested(me) {
+		fmt.Println("isNested")
 		v = elastic.NewNestedQuery("xdr", v)
 	}
 
