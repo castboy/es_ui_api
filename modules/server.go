@@ -9,6 +9,8 @@ import (
 )
 
 func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	r.ParseForm()
+
 	var query, esType string
 	index := "apt"
 
