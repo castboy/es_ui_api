@@ -8,6 +8,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const DefaultURL = "http://10.88.1.102:9200"
+
 func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	r.ParseForm()
 
