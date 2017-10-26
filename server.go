@@ -9,6 +9,16 @@ import (
 )
 
 func Server(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	res := modules.Demo()
+	var query, esType string
+	index := "apt"
+
+	if val, ok := r.Form["type"]; ok {
+		esType = val[0]
+	}
+	if val, ok := r.Form["query"]; ok {
+		query = val[0]
+	}
+
+	res := modules.Res(index, esType, query)
 	io.WriteString(w, res)
 }
