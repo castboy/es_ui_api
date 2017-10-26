@@ -17,7 +17,7 @@ var abbreviations = make([]string, 0)
 func Read() []string {
 	fi, err := os.Open("register_keyword")
 	if err != nil {
-		log.Fatalln("abbreviation file not exist")
+		log.Fatalln("register_keyword file not exist")
 	}
 	defer fi.Close()
 
