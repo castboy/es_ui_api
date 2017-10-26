@@ -6,6 +6,8 @@ import (
 	tree "go-study/expr2"
 
 	"encoding/json"
+	"fmt"
+	"log"
 
 	"gopkg.in/olivere/elastic.v5"
 )
@@ -26,7 +28,7 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 		Pretty(true).
 		Do(ctx)
 	if err != nil {
-		fmt.Println("search response err")
+		Log("Err", "search response err")
 	}
 
 	bytes, err := json.Marshal(res.Hits)
