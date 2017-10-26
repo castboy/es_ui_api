@@ -8,7 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func Server(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var query, esType string
 	index := "apt"
 
@@ -20,5 +20,5 @@ func Server(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	}
 
 	res := modules.Res(index, esType, query)
-	io.WriteString(w, res)
+	io.WriteString(w, string(*res))
 }
