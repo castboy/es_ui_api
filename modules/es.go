@@ -15,7 +15,7 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 
 	client, err := elastic.NewClient()
 	if err != nil {
-		panic(err)
+		log.Fatal("please conf es-cluster-api-host in: GOPATH/src/gopkg.inolivere/elastic.v5/client.go  --line 30")
 	}
 
 	res, err := client.Search().
@@ -26,12 +26,12 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 		Pretty(true).
 		Do(ctx)
 	if err != nil {
-		panic(err)
+		fmt.Println("search response err")
 	}
 
 	bytes, err := json.Marshal(res.Hits)
 	if nil != err {
-		panic(err)
+		fmt.Println("search response err")
 	}
 
 	return &bytes
