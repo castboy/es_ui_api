@@ -15,9 +15,15 @@ var exprBuildinKeywords = map[string]*tree.Keyword{}
 var abbreviations = make([]string, 0)
 
 func Read() []string {
-	fi, err := os.Open("register_keyword")
+	var fi *os.File
+	var err error
+
+	fi, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/castboy/es_ui_api/modules/register_keyword")
 	if err != nil {
-		log.Fatalln("register_keyword file not exist")
+		fi, err = os.Open(os.Getenv("GOPATH") + "\\src\\github.com\\castboy\\es_ui_api\\modules\\register_keyword")
+		if nil != err {
+			log.Fatal("register_keyword not exist")
+		}
 	}
 	defer fi.Close()
 
