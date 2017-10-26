@@ -2,6 +2,7 @@ package modules
 
 import (
 	"bufio"
+	"fmt"
 	tree "go-study/expr2"
 	"io"
 	"log"
@@ -68,5 +69,18 @@ func Load(ab []string) {
 		}
 
 		exprBuildinKeywords[keyword.Key] = &keyword
+	}
+
+	for _, v := range exprBuildinKeywords {
+		fmt.Println(*v)
+	}
+}
+
+func RegisterKeyword() {
+	abs := Read()
+	Load(abs)
+
+	for _, v := range exprBuildinKeywords {
+		tree.RegisterKeyword(*v)
 	}
 }

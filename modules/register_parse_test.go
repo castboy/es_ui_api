@@ -7,12 +7,7 @@ import (
 )
 
 func Test2(t *testing.T) {
-	abs := Read()
-	Load(abs)
-
-	for _, v := range exprBuildinKeywords {
-		tree.RegisterKeyword(*v)
-	}
+	RegisterKeyword()
 
 	line := `a1 a2||a3 le==1 || lv>=2 || lp>=4`
 
