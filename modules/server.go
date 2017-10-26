@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"encoding/base64"
 	"io"
 	"net/http"
 
@@ -15,7 +16,8 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		esType = val[0]
 	}
 	if val, ok := r.Form["query"]; ok {
-		query = val[0]
+		sDec, _ := base64.StdEncoding.DecodeString(val[0])
+		query = string(sDec)
 	}
 
 	res := Res(index, esType, query)
