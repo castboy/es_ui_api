@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"os"
+
 	seelog "github.com/cihub/seelog"
 )
 
