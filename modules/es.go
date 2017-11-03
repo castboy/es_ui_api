@@ -39,7 +39,14 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 	return &bytes
 }
 
+func Includes() {
+	fmt.Println("Includes:")
+	fmt.Println(elastic.NewFetchSourceContext(true).Include("Time", "En").Source())
+}
+
 func Res(esIndex string, esType string, expr string) *[]byte {
 	body := Expr(tree.LineExpr(expr))
+	BeJson(body)
+	Includes()
 	return Query(esIndex, esType, body)
 }
