@@ -12,7 +12,7 @@ import (
 	"gopkg.in/olivere/elastic.v5"
 )
 
-func Query(esIndex string, esType string, body elastic.Query) *[]byte {
+func Query(esIndex string, esType string, body elastic.Query, include interface{}) *[]byte {
 	ctx := context.Background()
 
 	client, err := elastic.NewClient()
@@ -24,6 +24,7 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 		Index(esIndex).
 		Type(esType).
 		Query(body).
+		Source(include).
 		From(0).Size(10).
 		Pretty(true).
 		Do(ctx)
@@ -39,14 +40,21 @@ func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 	return &bytes
 }
 
-func Includes() {
-	fmt.Println("Includes:")
-	BeJson(elastic.NewFetchSourceContext(true).Include("Time", "En"))
+func Includes() interface{} {
+	waf := []string{"Client", "Rev", "Msg", "Attack", "Severity", "Maturity", "Accuracy",
+		"Hostname", "Uri", "Unique_id", "Ref", "Tags", "Rule", "Version"}
+
+	include, err := elastic.NewFetchSourceContext(true).Include(waf...).Source()
+	if nil != err {
+		fmt.Println("NewFetchSourceContext.Source err")
+	}
+
+	return include
 }
 
 func Res(esIndex string, esType string, expr string) *[]byte {
 	body := Expr(tree.LineExpr(expr))
 	BeJson(body)
-	Includes()
-	return Query(esIndex, esType, body)
+	include := Includes()
+	return Query(esIndex, esType, body, include)
 }
