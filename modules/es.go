@@ -12,7 +12,7 @@ import (
 	"gopkg.in/olivere/elastic.v5"
 )
 
-func Query(esIndex string, esType string, body elastic.Query, include interface{}) *[]byte {
+func Query(esIndex string, esType string, body elastic.Query) *[]byte {
 	ctx := context.Background()
 
 	client, err := elastic.NewClient()
@@ -20,11 +20,14 @@ func Query(esIndex string, esType string, body elastic.Query, include interface{
 		log.Fatal("please conf es-cluster-api-host in: GOPATH/src/gopkg.inolivere/elastic.v5/client.go  --line 30")
 	}
 
+	waf := []string{"Client", "Rev", "Msg", "Attack", "Severity", "Maturity", "Accuracy",
+		"Hostname", "Uri", "Unique_id", "Ref", "Tags", "Rule", "Version"}
+
 	res, err := client.Search().
 		Index(esIndex).
 		Type(esType).
 		Query(body).
-		Source(include).
+		FetchSourceContext(elastic.NewFetchSourceContext(true).Include(waf...)).
 		From(0).Size(10).
 		Pretty(true).
 		Do(ctx)
@@ -40,21 +43,19 @@ func Query(esIndex string, esType string, body elastic.Query, include interface{
 	return &bytes
 }
 
-func Includes() interface{} {
-	waf := []string{"Client", "Rev", "Msg", "Attack", "Severity", "Maturity", "Accuracy",
-		"Hostname", "Uri", "Unique_id", "Ref", "Tags", "Rule", "Version"}
+//func Includes() interface{} {
 
-	include, err := elastic.NewFetchSourceContext(true).Include(waf...).Source()
-	if nil != err {
-		fmt.Println("NewFetchSourceContext.Source err")
-	}
+//	include, err := elastic.NewFetchSourceContext(true).Include(waf...).Source()
+//	if nil != err {
+//		fmt.Println("NewFetchSourceContext.Source err")
+//	}
 
-	return include
-}
+//	return include
+//}
 
 func Res(esIndex string, esType string, expr string) *[]byte {
 	body := Expr(tree.LineExpr(expr))
-	BeJson(body)
-	include := Includes()
-	return Query(esIndex, esType, body, include)
+	//	BeJson(body)
+	//	include := Includes()
+	return Query(esIndex, esType, body)
 }
