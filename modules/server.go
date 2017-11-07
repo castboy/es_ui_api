@@ -170,6 +170,7 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
+	fmt.Println(src)
 
 	resIds := ApiIdsRes{
 		IdsAlert: IdsAlert{
