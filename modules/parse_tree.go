@@ -99,6 +99,8 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 			fmt.Println("isNotInt")
 			v = elastic.NewBoolQuery().MustNot(elastic.NewMatchQuery(me.K.Name, me.V))
 		}
+	default:
+		panic(PANIC_UNKNOW_OPERATOR)
 	}
 	fmt.Println("me.K", *me.K)
 	if isNested(me) {

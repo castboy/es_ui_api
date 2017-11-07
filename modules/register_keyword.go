@@ -64,7 +64,7 @@ func Load(ab []string) {
 		case "object":
 			scope = tree.ScopeObject
 		default:
-			panic("wrong scope type")
+			panic(PANIC_SEARCH_SCOPE)
 		}
 
 		keyword := tree.Keyword{

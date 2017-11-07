@@ -2,60 +2,67 @@ package modules
 
 import (
 	"context"
-
-	tree "go-study/expr2"
-
-	"encoding/json"
 	"fmt"
+	tree "go-study/expr2"
 	"log"
 
 	"gopkg.in/olivere/elastic.v5"
 )
 
-func Query(esIndex string, esType string, body elastic.Query) *[]byte {
-	ctx := context.Background()
-
+func Cli() *elastic.Client {
 	client, err := elastic.NewClient()
 	if err != nil {
 		log.Fatal("please conf es-cluster-api-host in: GOPATH/src/gopkg.inolivere/elastic.v5/client.go  --line 30")
 	}
 
-	waf := []string{"Client", "Rev", "Msg", "Attack", "Severity", "Maturity", "Accuracy",
-		"Hostname", "Uri", "Unique_id", "Ref", "Tags", "Rule", "Version"}
-
-	res, err := client.Search().
-		Index(esIndex).
-		Type(esType).
-		Query(body).
-		FetchSourceContext(elastic.NewFetchSourceContext(true).Include(waf...)).
-		From(0).Size(10).
-		Pretty(true).
-		Do(ctx)
-	if err != nil {
-		Log("Err", "search response err")
-	}
-
-	bytes, err := json.Marshal(res.Hits)
-	if nil != err {
-		fmt.Println("search response err")
-	}
-
-	return &bytes
+	return client
 }
 
-//func Includes() interface{} {
+func Query(p Params, body elastic.Query) *elastic.SearchHits {
+	ctx := context.Background()
+	client := Cli()
+	fetchSrcCtx := FetchSrcCtx(p.T)
 
-//	include, err := elastic.NewFetchSourceContext(true).Include(waf...).Source()
-//	if nil != err {
-//		fmt.Println("NewFetchSourceContext.Source err")
-//	}
+	res, err := client.Search().
+		Index(ES_INDEX_ALERT).
+		Type(EsType[p.T]).
+		Query(body).
+		FetchSourceContext(fetchSrcCtx).
+		From(p.From).Size(p.Size).
+		Pretty(true).
+		Do(ctx)
 
-//	return include
-//}
+	if nil != err {
+		fmt.Println("Query Exe Err")
+	}
 
-func Res(esIndex string, esType string, expr string) *[]byte {
-	body := Expr(tree.LineExpr(expr))
-	//	BeJson(body)
-	//	include := Includes()
-	return Query(esIndex, esType, body)
+	return res.Hits
+}
+
+func IncludesItems(t AlertType) []string {
+	switch t {
+	case Waf:
+		return WafItems
+	case Vds:
+		return VdsItems
+	case Ids:
+		return IdsItems
+	default:
+		panic(PANIC_UNKNOW_ALERT)
+	}
+
+	return []string{}
+}
+
+func FetchSrcCtx(t AlertType) *elastic.FetchSourceContext {
+	include := IncludesItems(t)
+	ctx := elastic.NewFetchSourceContext(true).Include(include...)
+
+	return ctx
+}
+
+func EsRes(p Params) *elastic.SearchHits {
+	body := Expr(tree.LineExpr(p.Query))
+
+	return Query(p, body)
 }
