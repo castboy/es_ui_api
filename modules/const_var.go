@@ -53,7 +53,6 @@ var WafItems = []string{
 
 var VdsItems = []string{
 	"Subfile",
-	"Log_time",
 	"Threatname",
 	"Local_threatname",
 	"Local_vtype",
@@ -63,14 +62,24 @@ var VdsItems = []string{
 	"Local_enginetype",
 	"Local_logtype",
 	"Local_engineip",
-	"Xdr.Http.URL",
+	"Xdr.Time",
+	"Xdr.Proto",
+	"Xdr.Http.Url",
 	"Xdr.App.File",
 	"Xdr.Conn.Dip",
 	"Xdr.Conn.Dport",
+	"Xdr.Conn.DipInfo.Country",
+	"Xdr.Conn.DipInfo.Province",
+	"Xdr.Conn.DipInfo.City",
+	"Xdr.Conn.DipInfo.Lat",
+	"Xdr.Conn.DipInfo.Lng",
 	"Xdr.Conn.Sip",
+	"Xdr.Conn.Sport",
 	"Xdr.Conn.SipInfo.Country",
 	"Xdr.Conn.SipInfo.Province",
 	"Xdr.Conn.SipInfo.City",
+	"Xdr.Conn.SipInfo.Lat",
+	"Xdr.Conn.SipInfo.Lng",
 }
 
 var IdsItems = []string{

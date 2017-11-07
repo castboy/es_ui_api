@@ -130,6 +130,36 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 
 func ApiResVds(hit *elastic.SearchHit) interface{} {
 	var src ApiVdsRes
+	err := json.Unmarshal(*hit.Source, &src)
+	if nil != err {
+		fmt.Println("Unmarshal WafSource err")
+	}
+
+	resVds := ApiVdsRes{
+		VdsAlert: VdsAlert{
+			Subfile:          src.Subfile,
+			Threatname:       src.Threatname,
+			Local_threatname: src.Local_threatname,
+			Local_vtype:      src.Local_vtype,
+			Local_platfrom:   src.Local_platfrom,
+			Local_vname:      src.Local_vname,
+			Local_extent:     src.Local_extent,
+			Local_enginetype: src.Local_enginetype,
+			Local_logtype:    src.Local_logtype,
+			Local_engineip:   src.Local_engineip,
+		},
+		Time:         src.Xdr[0].Time,
+		Proto:        src.Xdr[0].Proto,
+		Severity:     src.Local_extent,
+		HttpUrl:      src.Xdr[0].Http.Url,
+		Filepath:     src.Xdr[0].App.File,
+		Dest_ip:      src.Xdr[0].Conn.Dip,
+		Dest_port:    src.Xdr[0].Conn.Dport,
+		Dest_ip_info: src.Xdr[0].Conn.DipInfo,
+		Src_ip:       src.Xdr[0].Conn.Sip,
+		Src_port:     src.Xdr[0].Conn.Sport,
+		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
+	}
 
 	return src
 }

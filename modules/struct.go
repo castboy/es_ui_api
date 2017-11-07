@@ -35,7 +35,6 @@ type WafAlert struct {
 
 type VdsAlert struct {
 	Subfile          string
-	Log_time         int
 	Threatname       string
 	Local_threatname string
 	Local_vtype      string
@@ -113,12 +112,17 @@ type ApiWafRes struct {
 
 type ApiVdsRes struct {
 	VdsAlert
-	HttpURL     string
-	Filepath    string
-	Dest_ip     string
-	Dest_port   uint32
-	Src_ip      string
-	Src_ip_info IpInfo
+	Time         uint64
+	Proto        uint8
+	Severity     string
+	HttpUrl      string
+	Filepath     string
+	Dest_ip      string
+	Dest_port    uint32
+	Dest_ip_info IpInfo
+	Src_ip       string
+	Src_port     uint32
+	Src_ip_info  IpInfo
 }
 
 type ApiIdsRes struct {
