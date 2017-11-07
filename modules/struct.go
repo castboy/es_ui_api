@@ -80,6 +80,8 @@ type IpInfo struct {
 	Country  string `json:"Country,omitempty"`
 	Province string `json:"Province,omitempty"`
 	City     string `json:"City,omitempty"`
+	Lng      string `json:"Lng,omitempty"`
+	Lat      string `json:"Lat,omitempty"`
 }
 
 type WafSource struct {
@@ -98,11 +100,15 @@ type IdsSource struct {
 
 type ApiWafRes struct {
 	WafAlert
-	Time        uint64
-	Dest_ip     string
-	Dest_port   uint16
-	Src_ip      string
-	Src_ip_info IpInfo
+	Proto        uint8
+	Time         uint64
+	Dest_ip      string
+	Dest_port    uint16
+	Dest_ip_info IpInfo
+	Src_ip       string
+	Src_port     uint16
+	Src_ip_info  IpInfo
+	Operators    string
 }
 
 type ApiVdsRes struct {

@@ -34,12 +34,21 @@ var WafItems = []string{
 	"Tags",
 	"Rule",
 	"Version",
+	"Xdr.Conn.Proto",
 	"Xdr.Conn.Dip",
 	"Xdr.Conn.Dport",
+	"Xdr.Conn.DipInfo.Country",
+	"Xdr.Conn.DipInfo.Province",
+	"Xdr.Conn.DipInfo.City",
+	"Xdr.Conn.DipInfo.Lat",
+	"Xdr.Conn.DipInfo.Lng",
 	"Xdr.Conn.Sip",
+	"Xdr.Conn.Sport",
 	"Xdr.Conn.SipInfo.Country",
 	"Xdr.Conn.SipInfo.Province",
 	"Xdr.Conn.SipInfo.City",
+	"Xdr.Conn.SipInfo.Lat",
+	"Xdr.Conn.SipInfo.Lng",
 }
 
 var VdsItems = []string{

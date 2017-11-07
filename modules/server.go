@@ -114,11 +114,15 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 			Rule:      src.Rule,
 			Version:   src.Version,
 		},
-		Time:        src.Xdr[0].Time,
-		Dest_ip:     src.Xdr[0].Conn.Dip,
-		Dest_port:   src.Xdr[0].Conn.Dport,
-		Src_ip:      src.Xdr[0].Conn.Sip,
-		Src_ip_info: src.Xdr[0].Conn.SipInfo,
+		Time:         src.Xdr[0].Time,
+		Proto:        src.Xdr[0].Conn.Proto,
+		Dest_ip:      src.Xdr[0].Conn.Dip,
+		Dest_port:    src.Xdr[0].Conn.Dport,
+		Dest_ip_info: src.Xdr[0].Conn.DipInfo,
+		Src_ip:       src.Xdr[0].Conn.Sip,
+		Src_port:     src.Xdr[0].Conn.Sport,
+		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
+		Operators:    "",
 	}
 
 	return resWaf
