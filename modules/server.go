@@ -129,7 +129,7 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 }
 
 func ApiResVds(hit *elastic.SearchHit) interface{} {
-	var src ApiVdsRes
+	var src VdsSource
 	err := json.Unmarshal(*hit.Source, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
@@ -149,7 +149,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 			Local_engineip:   src.Local_engineip,
 		},
 		Time:         src.Xdr[0].Time,
-		Proto:        src.Xdr[0].Proto,
+		Proto:        src.Xdr[0].Conn.Proto,
 		Severity:     src.Local_extent,
 		HttpUrl:      src.Xdr[0].Http.Url,
 		Filepath:     src.Xdr[0].App.File,
@@ -161,7 +161,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
 	}
 
-	return src
+	return resVds
 }
 
 func ApiResIds(hit *elastic.SearchHit) interface{} {

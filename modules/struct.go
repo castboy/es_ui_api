@@ -118,10 +118,10 @@ type ApiVdsRes struct {
 	HttpUrl      string
 	Filepath     string
 	Dest_ip      string
-	Dest_port    uint32
+	Dest_port    uint16
 	Dest_ip_info IpInfo
 	Src_ip       string
-	Src_port     uint32
+	Src_port     uint16
 	Src_ip_info  IpInfo
 }
 
