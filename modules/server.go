@@ -165,9 +165,31 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 }
 
 func ApiResIds(hit *elastic.SearchHit) interface{} {
-	var src ApiIdsRes
+	var src IdsSource
+	err := json.Unmarshal(*hit.Source, &src)
+	if nil != err {
+		fmt.Println("Unmarshal WafSource err")
+	}
 
-	return src
+	resIds := ApiIdsRes{
+		IdsAlert: IdsAlert{
+			Time:         src.Time,
+			Src_ip:       src.Src_ip,
+			Src_ip_info:  src.Src_ip_info,
+			Src_port:     src.Src_port,
+			Dest_ip:      src.Dest_ip,
+			Dest_ip_info: src.Dest_ip_info,
+			Dest_port:    src.Dest_port,
+			Proto:        src.Proto,
+			Byzoro_type:  src.Byzoro_type,
+			Attack_type:  src.Attack_type,
+			Details:      src.Details,
+			Severity:     src.Severity,
+			Engine:       src.Engine,
+		},
+	}
+
+	return resIds
 }
 
 func (res *ResApi) ResSingle(hits *elastic.SearchHits) {
