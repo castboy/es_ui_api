@@ -165,7 +165,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 }
 
 func ApiResIds(hit *elastic.SearchHit) interface{} {
-	var src IdsSource
+	var src IdsAlert
 	err := json.Unmarshal(*hit.Source, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")

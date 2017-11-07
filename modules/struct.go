@@ -3,11 +3,11 @@ package modules
 type IdsAlert struct {
 	Time         uint64
 	Src_ip       string
-	Src_ip_info  IpInfo
 	Src_port     uint32
+	Src_ip_info  IpInfo
 	Dest_ip      string
-	Dest_ip_info IpInfo
 	Dest_port    uint32
+	Dest_ip_info IpInfo
 	Proto        uint32
 	Byzoro_type  string
 	Attack_type  string
