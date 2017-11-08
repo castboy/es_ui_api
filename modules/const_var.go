@@ -3,6 +3,13 @@ package modules
 const ES_INDEX_ALERT = "apt"
 
 const (
+	SUCCESS HttpReq = 200
+	WRONG   HttpReq = 400
+)
+
+type HttpReq int
+
+const (
 	Waf     AlertType = 0
 	Vds     AlertType = 1
 	Ids     AlertType = 2

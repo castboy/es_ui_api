@@ -93,10 +93,6 @@ type VdsSource struct {
 	Xdr []BackendObj
 }
 
-type IdsSource struct {
-	IdsAlert
-}
-
 type ApiWafRes struct {
 	WafAlert
 	Proto        uint8

@@ -18,10 +18,10 @@ func Cli() *elastic.Client {
 	return client
 }
 
-func Query(p Params, body elastic.Query) *elastic.SearchHits {
+func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 	ctx := context.Background()
 	client := Cli()
-	fetchSrcCtx := FetchSrcCtx(p.T)
+	fetchSrcCtx := FetchSrcCtx(p)
 
 	res, err := client.Search().
 		Index(ES_INDEX_ALERT).
@@ -39,8 +39,8 @@ func Query(p Params, body elastic.Query) *elastic.SearchHits {
 	return res.Hits
 }
 
-func IncludesItems(t AlertType) []string {
-	switch t {
+func IncludesItems(p *Params) []string {
+	switch p.T {
 	case Waf:
 		return WafItems
 	case Vds:
@@ -56,14 +56,14 @@ func IncludesItems(t AlertType) []string {
 	return []string{}
 }
 
-func FetchSrcCtx(t AlertType) *elastic.FetchSourceContext {
-	include := IncludesItems(t)
+func FetchSrcCtx(p *Params) *elastic.FetchSourceContext {
+	include := IncludesItems(p)
 	ctx := elastic.NewFetchSourceContext(true).Include(include...)
 
 	return ctx
 }
 
-func EsRes(p Params) *elastic.SearchHits {
+func EsRes(p *Params) *elastic.SearchHits {
 	body := Expr(tree.LineExpr(p.Query))
 
 	return Query(p, body)

@@ -17,6 +17,13 @@ type Params struct {
 	Query string
 	From  int
 	Size  int
+	Err   error
+}
+
+type Res struct {
+	Total int         `json:"total"`
+	Hits  interface{} `json:"hits"`
+	Code  HttpReq     `json:"code"`
 }
 
 type ResApi []interface{}
@@ -46,11 +53,15 @@ func (p *Params) ParseQuery(r *http.Request) *Params {
 	if val, ok := r.Form["query"]; ok {
 		s, err := base64.StdEncoding.DecodeString(val[0])
 		if nil != err {
+			p.Err = ERR_DECODE_BASE64
 
+			return p
 		}
-
 		p.Query = string(s)
+
+		return p
 	}
+	p.Err = ERR_HTTP_REQ
 
 	return p
 }
@@ -59,39 +70,50 @@ func (p *Params) ParseFrom(r *http.Request) *Params {
 	if val, ok := r.Form["from"]; ok {
 		from, err := strconv.Atoi(val[0])
 		if nil != err {
-			fmt.Println("param from err")
+			p.Err = ERR_HTTP_REQ
+
+			return p
 		}
-
 		p.From = from
-	}
 
-	return p
+		return p
+	}
+	p.Err = ERR_HTTP_REQ
+
+	return nil
 }
 
 func (p *Params) ParseSize(r *http.Request) *Params {
 	if val, ok := r.Form["size"]; ok {
 		size, err := strconv.Atoi(val[0])
 		if nil != err {
-			fmt.Println("param size err")
+			p.Err = ERR_HTTP_REQ
+
+			return p
 		}
-
 		p.Size = size
-	}
 
-	return p
+		return p
+	}
+	p.Err = ERR_HTTP_REQ
+
+	return nil
 }
 
-func ParseParams(r *http.Request) Params {
-	var p Params
-
+func ParseReq(r *http.Request) (*Params, error) {
 	err := r.ParseForm()
-	if nil != err {
-
-	} else {
-		p.ParseEsType(r).ParseQuery(r).ParseFrom(r).ParseSize(r)
+	p := ParseParams(r)
+	if nil != err || nil != p.Err {
+		return nil, ERR_HTTP_REQ
 	}
 
-	return p
+	return p, nil
+}
+
+func ParseParams(r *http.Request) *Params {
+	var p Params
+
+	return p.ParseEsType(r).ParseQuery(r).ParseFrom(r).ParseSize(r)
 }
 
 func ApiResWaf(hit *elastic.SearchHit) interface{} {
@@ -197,8 +219,8 @@ func (res *ResApi) ResMulti(hits *elastic.SearchHits) {
 	}
 }
 
-func (res *ResApi) ResSingle(hits *elastic.SearchHits, t AlertType) {
-	switch t {
+func (res *ResApi) ResSingle(hits *elastic.SearchHits, p Params) {
+	switch p.T {
 	case Waf:
 		res.SingleRes(hits, ApiResWaf)
 	case Vds:
@@ -216,27 +238,44 @@ func (res *ResApi) SingleRes(hits *elastic.SearchHits, f func(hit *elastic.Searc
 	}
 }
 
-func ApiRes(hits *elastic.SearchHits, t AlertType) string {
+func Hits(hits *elastic.SearchHits, p Params) ResApi {
 	var res ResApi
 
-	if t == Multi {
+	if p.T == Multi {
 		res.ResMulti(hits)
 	} else {
-		res.ResSingle(hits, t)
+		res.ResSingle(hits, p)
 	}
 
-	bytes, err := json.Marshal(res)
+	return res
+}
+
+func ResStruct(total int, hits interface{}, code HttpReq) Res {
+	return Res{Total: total, Hits: hits, Code: code}
+}
+
+func ApiRes(i interface{}) *string {
+	bytes, err := json.Marshal(i)
 	if nil != err {
 		fmt.Println("Marshal hits err")
 	}
 
-	return string(bytes)
+	res := string(bytes)
+	return &res
 }
 
 func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	p := ParseParams(r)
-	hits := EsRes(p)
-	s := ApiRes(hits, p.T)
+	var res Res
 
-	io.WriteString(w, s)
+	p, err := ParseReq(r)
+	if nil != err {
+		res = ResStruct(0, nil, WRONG)
+	} else {
+		hits := EsRes(p)
+		res = ResStruct(5, Hits(hits, *p), 200)
+	}
+
+	s := ApiRes(res)
+
+	io.WriteString(w, *s)
 }
