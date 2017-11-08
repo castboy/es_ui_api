@@ -108,6 +108,7 @@ type ApiWafRes struct {
 	Src_port     uint16
 	Src_ip_info  IpInfo
 	Operators    string
+	Type         string
 }
 
 type ApiVdsRes struct {
@@ -123,8 +124,10 @@ type ApiVdsRes struct {
 	Src_ip       string
 	Src_port     uint16
 	Src_ip_info  IpInfo
+	Type         string
 }
 
 type ApiIdsRes struct {
 	IdsAlert
+	Type string
 }

@@ -123,6 +123,7 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 		Src_port:     src.Xdr[0].Conn.Sport,
 		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
 		Operators:    "",
+		Type:         "waf",
 	}
 
 	return resWaf
@@ -159,6 +160,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 		Src_ip:       src.Xdr[0].Conn.Sip,
 		Src_port:     src.Xdr[0].Conn.Sport,
 		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
+		Type:         "vds",
 	}
 
 	return resVds
@@ -187,6 +189,7 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 			Severity:     src.Severity,
 			Engine:       src.Engine,
 		},
+		Type: "ids",
 	}
 
 	return resIds
