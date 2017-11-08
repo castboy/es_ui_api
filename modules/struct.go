@@ -127,8 +127,4 @@ type ApiVdsRes struct {
 
 type ApiIdsRes struct {
 	IdsAlert
-	Dest_ip     string
-	Dest_port   uint32
-	Src_ip      string
-	Src_ip_info IpInfo
 }

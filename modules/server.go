@@ -171,13 +171,6 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
-	fmt.Println(src.Src_ip)
-	fmt.Println(src.Src_ip_info)
-	fmt.Println(src.Src_port)
-	fmt.Println(src.Dest_port)
-	fmt.Println(src.Dest_ip)
-	fmt.Println(src.Dest_ip_info)
-
 	resIds := ApiIdsRes{
 		IdsAlert: IdsAlert{
 			Time:         src.Time,
