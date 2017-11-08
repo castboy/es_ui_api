@@ -35,6 +35,8 @@ func (p *Params) ParseEsType(r *http.Request) *Params {
 		default:
 			panic(PANIC_UNKNOW_ALERT)
 		}
+	} else {
+		p.T = Multi
 	}
 
 	return p
