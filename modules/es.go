@@ -47,6 +47,8 @@ func IncludesItems(t AlertType) []string {
 		return VdsItems
 	case Ids:
 		return IdsItems
+	case Multi:
+		return append(append(WafItems, VdsItems...), IdsItems...)
 	default:
 		panic(PANIC_UNKNOW_ALERT)
 	}
