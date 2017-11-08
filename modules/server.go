@@ -195,7 +195,7 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 	return resIds
 }
 
-func (res *ResApi) ResSingle(hits *elastic.SearchHits) {
+func (res *ResApi) ResMulti(hits *elastic.SearchHits) {
 	for _, hit := range hits.Hits {
 		switch hit.Type {
 		case EsType[Waf]:
@@ -210,20 +210,20 @@ func (res *ResApi) ResSingle(hits *elastic.SearchHits) {
 	}
 }
 
-func (res *ResApi) ResMulti(hits *elastic.SearchHits, t AlertType) {
+func (res *ResApi) ResSingle(hits *elastic.SearchHits, t AlertType) {
 	switch t {
 	case Waf:
-		res.MultiRes(hits, ApiResWaf)
+		res.SingleRes(hits, ApiResWaf)
 	case Vds:
-		res.MultiRes(hits, ApiResVds)
+		res.SingleRes(hits, ApiResVds)
 	case Ids:
-		res.MultiRes(hits, ApiResIds)
+		res.SingleRes(hits, ApiResIds)
 	default:
 		panic(PANIC_UNKNOW_ALERT)
 	}
 }
 
-func (res *ResApi) MultiRes(hits *elastic.SearchHits, f func(hit *elastic.SearchHit) interface{}) {
+func (res *ResApi) SingleRes(hits *elastic.SearchHits, f func(hit *elastic.SearchHit) interface{}) {
 	for _, hit := range hits.Hits {
 		*res = append(*res, f(hit))
 	}
@@ -233,9 +233,9 @@ func ApiRes(hits *elastic.SearchHits, t AlertType) string {
 	var res ResApi
 
 	if t == Multi {
-		res.ResSingle(hits)
+		res.ResMulti(hits)
 	} else {
-		res.ResMulti(hits, t)
+		res.ResSingle(hits, t)
 	}
 
 	bytes, err := json.Marshal(res)
