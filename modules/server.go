@@ -30,6 +30,8 @@ func (p *Params) ParseEsType(r *http.Request) *Params {
 			p.T = Vds
 		case EsType[Ids]:
 			p.T = Ids
+		case EsType[Multi]:
+			p.T = Multi
 		default:
 			panic(PANIC_UNKNOW_ALERT)
 		}
