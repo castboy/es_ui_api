@@ -170,23 +170,29 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
-	fmt.Println(src)
+
+	fmt.Println(src.Src_ip)
+	fmt.Println(src.Src_ip_info)
+	fmt.Println(src.Src_port)
+	fmt.Println(src.Dest_port)
+	fmt.Println(src.Dest_ip)
+	fmt.Println(src.Dest_ip_info)
 
 	resIds := ApiIdsRes{
 		IdsAlert: IdsAlert{
-			Time:   src.Time,
-			Src_ip: src.Src_ip,
-			//			Src_ip_info:  src.Src_ip_info,
-			Src_port: src.Src_port,
-			Dest_ip:  src.Dest_ip,
-			//			Dest_ip_info: src.Dest_ip_info,
-			Dest_port:   src.Dest_port,
-			Proto:       src.Proto,
-			Byzoro_type: src.Byzoro_type,
-			Attack_type: src.Attack_type,
-			Details:     src.Details,
-			Severity:    src.Severity,
-			Engine:      src.Engine,
+			Time:         src.Time,
+			Src_ip:       src.Src_ip,
+			Src_ip_info:  src.Src_ip_info,
+			Src_port:     src.Src_port,
+			Dest_ip:      src.Dest_ip,
+			Dest_ip_info: src.Dest_ip_info,
+			Dest_port:    src.Dest_port,
+			Proto:        src.Proto,
+			Byzoro_type:  src.Byzoro_type,
+			Attack_type:  src.Attack_type,
+			Details:      src.Details,
+			Severity:     src.Severity,
+			Engine:       src.Engine,
 		},
 	}
 
