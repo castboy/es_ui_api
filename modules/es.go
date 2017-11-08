@@ -64,6 +64,12 @@ func FetchSrcCtx(p *Params) *elastic.FetchSourceContext {
 }
 
 func EsRes(p *Params) *elastic.SearchHits {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
 	body := Expr(tree.LineExpr(p.Query))
 
 	return Query(p, body)

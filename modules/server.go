@@ -21,7 +21,7 @@ type Params struct {
 }
 
 type Res struct {
-	Total int         `json:"total"`
+	Total int64       `json:"total"`
 	Hits  interface{} `json:"hits"`
 	Code  HttpReq     `json:"code"`
 }
@@ -250,7 +250,7 @@ func Hits(hits *elastic.SearchHits, p Params) ResApi {
 	return res
 }
 
-func ResStruct(total int, hits interface{}, code HttpReq) Res {
+func ResStruct(total int64, hits interface{}, code HttpReq) Res {
 	return Res{Total: total, Hits: hits, Code: code}
 }
 
@@ -272,7 +272,11 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		res = ResStruct(0, nil, WRONG)
 	} else {
 		hits := EsRes(p)
-		res = ResStruct(5, Hits(hits, *p), 200)
+		if nil != hits {
+			res = ResStruct(hits.TotalHits, Hits(hits, *p), SUCCESS)
+		} else {
+			res = ResStruct(0, nil, WRONG)
+		}
 	}
 
 	s := ApiRes(res)
