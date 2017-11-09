@@ -80,7 +80,7 @@ func (p *Params) ParseFrom(r *http.Request) *Params {
 	}
 	p.Err = ERR_HTTP_REQ
 
-	return nil
+	return p
 }
 
 func (p *Params) ParseSize(r *http.Request) *Params {
@@ -97,7 +97,7 @@ func (p *Params) ParseSize(r *http.Request) *Params {
 	}
 	p.Err = ERR_HTTP_REQ
 
-	return nil
+	return p
 }
 
 func ParseReq(r *http.Request) (*Params, error) {
