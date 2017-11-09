@@ -80,7 +80,7 @@ func EsRes(p *Params, e *tree.Expr) *elastic.SearchHits {
 	i, _ := body.Source()
 
 	bytes, _ := json.Marshal(i)
-	fmt.Println(bytes)
+	fmt.Println(string(bytes))
 
 	return Query(p, body)
 }
