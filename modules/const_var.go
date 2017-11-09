@@ -10,7 +10,8 @@ const (
 	NOT_CLOSE_QUOTES_DOUBLE      ResCode = 4
 	NOT_FOUND_QUOTES_SINGLE_NEXT ResCode = 5
 	TOKEN_IS_NOT_EXPRESS         ResCode = 6
-	CodeEnd                      ResCode = 7
+	NOT_CLOSE_PARENTHESIS        ResCode = 7
+	CodeEnd                      ResCode = 8
 )
 
 type ResCode int
@@ -21,6 +22,7 @@ var ErrExprType = [CodeEnd]ExprErr{
 	NOT_CLOSE_QUOTES_DOUBLE:      `not close "`,
 	NOT_FOUND_QUOTES_SINGLE_NEXT: `no found single' next`,
 	TOKEN_IS_NOT_EXPRESS:         `token isn't expr`,
+	NOT_CLOSE_PARENTHESIS:        `not close )1`,
 }
 
 const (

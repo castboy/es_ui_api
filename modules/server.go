@@ -284,6 +284,8 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				res = ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
 			case ErrExprType[TOKEN_IS_NOT_EXPRESS]:
 				res = ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
+			case ErrExprType[NOT_CLOSE_PARENTHESIS]:
+				res = ResStruct(0, nil, NOT_CLOSE_PARENTHESIS)
 			default:
 				panic(PANIC_UNKNOW_ERR_EXPR)
 			}
