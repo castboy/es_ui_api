@@ -2,6 +2,7 @@ package modules
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	tree "go-study/expr2"
 	"log"
@@ -76,6 +77,10 @@ func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 func EsRes(p *Params, e *tree.Expr) *elastic.SearchHits {
 
 	body := Expr(e)
+	i, _ := body.Source()
+
+	bytes, _ := json.Marshal(i)
+	fmt.Println(bytes)
 
 	return Query(p, body)
 }
