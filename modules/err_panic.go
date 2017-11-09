@@ -11,3 +11,4 @@ var ERR_UNMARSHAL_ES_RES = errors.New("Unmarshal Es-Response  Err")
 var PANIC_UNKNOW_ALERT = "Unknow Alert Type"
 var PANIC_UNKNOW_OPERATOR = "Undefine Operator"
 var PANIC_SEARCH_SCOPE = "Unknow search scope"
+var PANIC_UNKNOW_ERR_EXPR = "Unknow Expr Err"

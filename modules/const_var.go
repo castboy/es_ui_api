@@ -3,11 +3,25 @@ package modules
 const ES_INDEX_ALERT = "apt"
 
 const (
-	SUCCESS HttpReq = 200
-	WRONG   HttpReq = 400
+	SUCCESS                      ResCode = 0
+	WRONG                        ResCode = 1
+	ERR_EXPRESS                  ResCode = 2
+	NOT_CLOSE_QUOTES_SINGLE      ResCode = 3
+	NOT_CLOSE_QUOTES_DOUBLE      ResCode = 4
+	NOT_FOUND_QUOTES_SINGLE_NEXT ResCode = 5
+	TOKEN_IS_NOT_EXPRESS         ResCode = 6
+	CodeEnd                      ResCode = 7
 )
 
-type HttpReq int
+type ResCode int
+type ExprErr string
+
+var ErrExprType = [CodeEnd]ExprErr{
+	NOT_CLOSE_QUOTES_SINGLE:      `not close '`,
+	NOT_CLOSE_QUOTES_DOUBLE:      `not close "`,
+	NOT_FOUND_QUOTES_SINGLE_NEXT: `no found single' next`,
+	TOKEN_IS_NOT_EXPRESS:         `token isn't expr`,
+}
 
 const (
 	Waf     AlertType = 0

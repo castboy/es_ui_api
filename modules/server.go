@@ -23,7 +23,7 @@ type Params struct {
 type Res struct {
 	Total int64       `json:"total"`
 	Hits  interface{} `json:"hits"`
-	Code  HttpReq     `json:"code"`
+	Code  ResCode     `json:"code"`
 }
 
 type ResApi []interface{}
@@ -250,7 +250,7 @@ func Hits(hits *elastic.SearchHits, p Params) ResApi {
 	return res
 }
 
-func ResStruct(total int64, hits interface{}, code HttpReq) Res {
+func ResStruct(total int64, hits interface{}, code ResCode) Res {
 	return Res{Total: total, Hits: hits, Code: code}
 }
 
@@ -271,11 +271,23 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if nil != err {
 		res = ResStruct(0, nil, WRONG)
 	} else {
-		hits := EsRes(p)
-		if nil != hits {
-			res = ResStruct(hits.TotalHits, Hits(hits, *p), SUCCESS)
+		e, err := RecoverLineExpr(p)
+		if nil == e {
+			switch err {
+			case ErrExprType[NOT_CLOSE_QUOTES_SINGLE]:
+				ResStruct(0, nil, NOT_CLOSE_QUOTES_SINGLE)
+			case ErrExprType[NOT_CLOSE_QUOTES_DOUBLE]:
+				ResStruct(0, nil, NOT_CLOSE_QUOTES_DOUBLE)
+			case ErrExprType[NOT_FOUND_QUOTES_SINGLE_NEXT]:
+				ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
+			case ErrExprType[TOKEN_IS_NOT_EXPRESS]:
+				ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
+			default:
+				panic(PANIC_UNKNOW_ERR_EXPR)
+			}
 		} else {
-			res = ResStruct(0, nil, WRONG)
+			hits := EsRes(p, e)
+			res = ResStruct(hits.TotalHits, Hits(hits, *p), SUCCESS)
 		}
 	}
 

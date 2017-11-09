@@ -63,14 +63,19 @@ func FetchSrcCtx(p *Params) *elastic.FetchSourceContext {
 	return ctx
 }
 
-func EsRes(p *Params) *elastic.SearchHits {
+func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println(err)
-		}
+		err = ExprErr(fmt.Sprintln(recover()))
 	}()
 
-	body := Expr(tree.LineExpr(p.Query))
+	expr = tree.LineExpr(p.Query)
+
+	return expr, ""
+}
+
+func EsRes(p *Params, e *tree.Expr) *elastic.SearchHits {
+
+	body := Expr(e)
 
 	return Query(p, body)
 }
