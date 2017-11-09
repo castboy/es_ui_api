@@ -272,16 +272,18 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		res = ResStruct(0, nil, WRONG)
 	} else {
 		e, err := RecoverLineExpr(p)
+		fmt.Println("e:", e)
+		fmt.Println("err:", err)
 		if nil == e {
 			switch err {
 			case ErrExprType[NOT_CLOSE_QUOTES_SINGLE]:
-				ResStruct(0, nil, NOT_CLOSE_QUOTES_SINGLE)
+				res = ResStruct(0, nil, NOT_CLOSE_QUOTES_SINGLE)
 			case ErrExprType[NOT_CLOSE_QUOTES_DOUBLE]:
-				ResStruct(0, nil, NOT_CLOSE_QUOTES_DOUBLE)
+				res = ResStruct(0, nil, NOT_CLOSE_QUOTES_DOUBLE)
 			case ErrExprType[NOT_FOUND_QUOTES_SINGLE_NEXT]:
-				ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
+				res = ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
 			case ErrExprType[TOKEN_IS_NOT_EXPRESS]:
-				ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
+				res = ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
 			default:
 				panic(PANIC_UNKNOW_ERR_EXPR)
 			}

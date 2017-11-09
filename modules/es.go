@@ -65,7 +65,7 @@ func FetchSrcCtx(p *Params) *elastic.FetchSourceContext {
 
 func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 	defer func() {
-		err = ExprErr(fmt.Sprintln(recover()))
+		err = ExprErr(fmt.Sprint(recover()))
 	}()
 
 	expr = tree.LineExpr(p.Query)
