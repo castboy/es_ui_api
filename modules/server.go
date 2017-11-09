@@ -287,7 +287,7 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			case ErrExprType[NOT_CLOSE_PARENTHESIS]:
 				res = ResStruct(0, nil, NOT_CLOSE_PARENTHESIS)
 			default:
-				panic(PANIC_UNKNOW_ERR_EXPR)
+				res = ResStruct(0, nil, ERR_EXPRESS)
 			}
 		} else {
 			hits := EsRes(p, e)
