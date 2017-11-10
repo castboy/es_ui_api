@@ -22,13 +22,13 @@ func Cli() *elastic.Client {
 func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 	ctx := context.Background()
 	client := Cli()
-	//	fetchSrcCtx := FetchSrcCtx(p)
+	fetchSrcCtx := FetchSrcCtx(p)
 
 	res, err := client.Search().
 		Index(ES_INDEX_ALERT).
 		Type(EsType[p.T]).
 		Query(body).
-		//		FetchSourceContext(fetchSrcCtx).
+		FetchSourceContext(fetchSrcCtx).
 		From(p.From).Size(p.Size).
 		Pretty(true).
 		Do(ctx)

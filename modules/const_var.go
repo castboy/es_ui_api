@@ -3,14 +3,14 @@ package modules
 const ES_INDEX_ALERT = "apt"
 
 const (
-	SUCCESS                      ResCode = 0
-	WRONG                        ResCode = 1
-	ERR_EXPRESS                  ResCode = 2
-	NOT_CLOSE_QUOTES_SINGLE      ResCode = 3
-	NOT_CLOSE_QUOTES_DOUBLE      ResCode = 4
-	NOT_FOUND_QUOTES_SINGLE_NEXT ResCode = 5
-	TOKEN_IS_NOT_EXPRESS         ResCode = 6
-	NOT_CLOSE_PARENTHESIS        ResCode = 7
+	SUCCESS                      ResCode = 0 //请求成功
+	WRONG                        ResCode = 1 //请求参数书写不正确
+	ERR_EXPRESS                  ResCode = 2 //请求表达式有错误
+	NOT_CLOSE_QUOTES_SINGLE      ResCode = 3 //单引号没闭合
+	NOT_CLOSE_QUOTES_DOUBLE      ResCode = 4 //双引号没闭合
+	NOT_FOUND_QUOTES_SINGLE_NEXT ResCode = 5 //没有发现后续的单引号
+	TOKEN_IS_NOT_EXPRESS         ResCode = 6 //表达式子元素错误
+	NOT_CLOSE_PARENTHESIS        ResCode = 7 //括号没闭合
 	CodeEnd                      ResCode = 8
 )
 
@@ -79,6 +79,7 @@ var VdsItems = []string{
 	"Threatname",
 	"Local_threatname",
 	"Local_vtype",
+	"Attack",
 	"Local_platfrom",
 	"Local_vname",
 	"Local_extent",
@@ -109,6 +110,7 @@ var IdsItems = []string{
 	"Time",
 	"Proto",
 	"Byzoro_type",
+	"Attack",
 	"Attack_type",
 	"Details",
 	"Severity",

@@ -168,6 +168,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 			Threatname:       src.Threatname,
 			Local_threatname: src.Local_threatname,
 			Local_vtype:      src.Local_vtype,
+			Attack:           src.Attack,
 			Local_platfrom:   src.Local_platfrom,
 			Local_vname:      src.Local_vname,
 			Local_extent:     src.Local_extent,

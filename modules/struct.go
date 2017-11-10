@@ -9,6 +9,7 @@ type IdsAlert struct {
 	Dest_port    uint32
 	Dest_ip_info IpInfo
 	Proto        uint32
+	Attack       string
 	Byzoro_type  string
 	Attack_type  string
 	Details      string
@@ -38,6 +39,7 @@ type VdsAlert struct {
 	Threatname       string
 	Local_threatname string
 	Local_vtype      string
+	Attack           string
 	Local_platfrom   string
 	Local_vname      string
 	Local_extent     string
