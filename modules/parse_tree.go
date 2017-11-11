@@ -87,9 +87,11 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 		}
 	case tree.OpInclude:
 		if me.K.Scope == tree.ScopeAll {
-			v = elastic.NewMatchQuery("_all", me.V)
+			//			v = elastic.NewMatchQuery("_all", me.V)
+			v = elastic.NewWildcardQuery("_all", "*"+me.V+"*")
 		} else {
-			v = elastic.NewMatchQuery(me.K.Name, me.V)
+			//			v = elastic.NewMatchQuery(me.K.Name, me.V)
+			v = elastic.NewWildcardQuery(me.K.Name, "*"+me.V+"*")
 		}
 	case tree.OpNeq:
 		if isInt(me) {
