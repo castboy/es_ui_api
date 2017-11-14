@@ -105,7 +105,7 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 	fmt.Println("me.K", *me.K)
 	if isNested(me) {
 		fmt.Println("isNested")
-		v = elastic.NewNestedQuery("xdr", v)
+		v = elastic.NewNestedQuery("Xdr", v)
 	}
 
 	return v
