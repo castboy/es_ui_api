@@ -10,11 +10,17 @@ import (
 
 func isInt(me *tree.Atomic) bool {
 	fmt.Println("me.K.Type:", me.K.Type)
+	if me.K.Type&1 != 0 {
+		fmt.Println("isInt")
+	}
 	return me.K.Type&1 != 0 //0非整数， 1整数
 }
 
 func isNested(me *tree.Atomic) bool {
 	me.K.Type >>= 1
+	if me.K.Type&1 != 0 {
+		fmt.Println("isNested")
+	}
 	return me.K.Type&1 != 0 //0非嵌套， 1嵌套
 }
 
