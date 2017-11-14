@@ -3,5 +3,5 @@ SPrn       Xdr.Conn.SipInfo.Province                object          2
 Dport	   Xdr.Conn.Dport                           object          3
 Proto      Xdr.Conn.Proto                           object          2 
 Date	   Xdr.TimeAppend                           object          2
-Attack     AttackAppend                             object          0
+Attack     Attack                                   object          0
 Severity   SeverityAppend                           object          0
