@@ -86,7 +86,8 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 			v = elastic.NewRangeQuery(me.K.Name).Gte(me.V).Lte(me.V)
 		} else {
 			fmt.Println("isNotInt")
-			v = elastic.NewTermQuery(me.K.Name, me.V)
+			//			v = elastic.NewTermQuery(me.K.Name, me.V)
+			v = elastic.NewQueryStringQuery(me.V).DefaultField(me.K.Name).DefaultOperator("AND")
 		}
 	case tree.OpInclude:
 		if me.K.Scope == tree.ScopeAll {
