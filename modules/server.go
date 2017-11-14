@@ -117,92 +117,106 @@ func ParseParams(r *http.Request) *Params {
 }
 
 func ApiResWaf(hit *elastic.SearchHit) interface{} {
-	var src WafSource
+	var src SrcWaf
 	err := json.Unmarshal(*hit.Source, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
-	resWaf := ApiWafRes{
-		WafAlert: WafAlert{
-			Client:    src.Client,
-			Rev:       src.Rev,
-			Msg:       src.Msg,
-			Attack:    src.Attack,
-			Severity:  src.Severity,
-			Maturity:  src.Maturity,
-			Accuracy:  src.Accuracy,
-			Hostname:  src.Hostname,
-			Uri:       src.Uri,
-			Unique_id: src.Unique_id,
-			Ref:       src.Ref,
-			Tags:      src.Tags,
-			Rule:      src.Rule,
-			Version:   src.Version,
+	resWaf := ResWaf{
+		Client:    src.Client,
+		Rev:       src.Rev,
+		Msg:       src.Msg,
+		Attack:    src.Attack,
+		Severity:  src.SeverityAppend,
+		Maturity:  src.Maturity,
+		Accuracy:  src.Accuracy,
+		Hostname:  src.Hostname,
+		Uri:       src.Uri,
+		Unique_id: src.Unique_id,
+		Ref:       src.Ref,
+		Tags:      src.Tags,
+		Rule:      src.Rule,
+		Version:   src.Version,
+		Time:      src.Xdr[0].TimeAppend,
+		Conn: ConnInfo{
+			Proto:        src.Xdr[0].Conn.ProtoAppend,
+			Dest_ip:      src.Xdr[0].Conn.Dip,
+			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
+			Src_ip:       src.Xdr[0].Conn.Sip,
+			Src_port:     src.Xdr[0].Conn.Sport,
+			Src_ip_info:  src.Xdr[0].Conn.SipInfo,
 		},
-		Time:         src.Xdr[0].Time,
-		Proto:        src.Xdr[0].Conn.Proto,
-		Dest_ip:      src.Xdr[0].Conn.Dip,
-		Dest_port:    src.Xdr[0].Conn.Dport,
-		Dest_ip_info: src.Xdr[0].Conn.DipInfo,
-		Src_ip:       src.Xdr[0].Conn.Sip,
-		Src_port:     src.Xdr[0].Conn.Sport,
-		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
-		Operators:    "",
-		Type:         "waf",
+		Operators: "",
+		Type:      "waf",
 	}
 
 	return resWaf
 }
 
 func ApiResVds(hit *elastic.SearchHit) interface{} {
-	var src VdsSource
+	var src SrcVds
 	err := json.Unmarshal(*hit.Source, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
-	resVds := ApiVdsRes{
-		VdsAlert: VdsAlert{
-			Subfile:          src.Subfile,
-			Threatname:       src.Threatname,
-			Local_threatname: src.Local_threatname,
-			Local_vtype:      src.Local_vtype,
-			Attack:           src.Attack,
-			Local_platfrom:   src.Local_platfrom,
-			Local_vname:      src.Local_vname,
-			Local_extent:     src.Local_extent,
-			Local_enginetype: src.Local_enginetype,
-			Local_logtype:    src.Local_logtype,
-			Local_engineip:   src.Local_engineip,
+	resVds := ResVds{
+		Subfile:          src.Subfile,
+		Threatname:       src.Threatname,
+		Local_threatname: src.Local_threatname,
+		Attack:           src.Attack,
+		Local_platfrom:   src.Local_platfrom,
+		Local_vname:      src.Local_vname,
+		Severity:         src.SeverityAppend,
+		Local_enginetype: src.Local_enginetype,
+		Local_logtype:    src.Local_logtype,
+		Local_engineip:   src.Local_engineip,
+		Time:             src.Xdr[0].TimeAppend,
+		HttpUrl:          src.Xdr[0].Http.Url,
+		Filepath:         src.Xdr[0].App.File,
+		Conn: ConnInfo{
+			Proto:        src.Xdr[0].Conn.ProtoAppend,
+			Dest_ip:      src.Xdr[0].Conn.Dip,
+			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
+			Src_ip:       src.Xdr[0].Conn.Sip,
+			Src_port:     src.Xdr[0].Conn.Sport,
+			Src_ip_info:  src.Xdr[0].Conn.SipInfo,
 		},
-		Time:         src.Xdr[0].Time,
-		Proto:        src.Xdr[0].Conn.Proto,
-		Severity:     src.Local_extent,
-		HttpUrl:      src.Xdr[0].Http.Url,
-		Filepath:     src.Xdr[0].App.File,
-		Dest_ip:      src.Xdr[0].Conn.Dip,
-		Dest_port:    src.Xdr[0].Conn.Dport,
-		Dest_ip_info: src.Xdr[0].Conn.DipInfo,
-		Src_ip:       src.Xdr[0].Conn.Sip,
-		Src_port:     src.Xdr[0].Conn.Sport,
-		Src_ip_info:  src.Xdr[0].Conn.SipInfo,
-		Type:         "vds",
+		Type: "vds",
 	}
 
 	return resVds
 }
 
 func ApiResIds(hit *elastic.SearchHit) interface{} {
-	var res ApiIdsRes
-	err := json.Unmarshal(*hit.Source, &res)
+	var src SrcIds
+	err := json.Unmarshal(*hit.Source, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
-	res.Type = "ids"
+	resIds := ResIds{
+		Time:     src.Xdr[0].TimeAppend,
+		Attack:   src.Attack,
+		Details:  "",
+		Severity: src.SeverityAppend,
+		Engine:   src.Engine,
+		Conn: ConnInfo{
+			Src_ip:       src.Xdr[0].Conn.Sip,
+			Src_port:     src.Xdr[0].Conn.Sport,
+			Src_ip_info:  src.Xdr[0].Conn.SipInfo,
+			Dest_ip:      src.Xdr[0].Conn.Dip,
+			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
+			Proto:        src.Xdr[0].Conn.ProtoAppend,
+		},
+		Type: "ids",
+	}
 
-	return res
+	return resIds
 }
 
 func (res *ResApi) ResMulti(hits *elastic.SearchHits) {
