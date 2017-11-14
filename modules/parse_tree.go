@@ -10,17 +10,13 @@ import (
 
 func isInt(me *tree.Atomic) bool {
 	fmt.Println("me.K.Type:", me.K.Type)
-	if me.K.Type&1 != 0 {
-		fmt.Println("isInt")
-	}
+
 	return me.K.Type&1 != 0 //0非整数， 1整数
 }
 
 func isNested(me *tree.Atomic) bool {
 	me.K.Type >>= 1
-	if me.K.Type&1 != 0 {
-		fmt.Println("isNested")
-	}
+
 	return me.K.Type&1 != 0 //0非嵌套， 1嵌套
 }
 
@@ -73,7 +69,6 @@ func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 }
 
 func AtomicExpr(me *tree.Atomic) interface{} {
-	fmt.Println("me.K", *me.K)
 	var v elastic.Query
 
 	switch me.Op {
@@ -87,8 +82,10 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 		v = elastic.NewRangeQuery(me.K.Name).Lt(me.V)
 	case tree.OpEq:
 		if isInt(me) {
+			fmt.Println("isInt")
 			v = elastic.NewRangeQuery(me.K.Name).Gte(me.V).Lte(me.V)
 		} else {
+			fmt.Println("isNotInt")
 			v = elastic.NewTermQuery(me.K.Name, me.V)
 		}
 	case tree.OpInclude:
