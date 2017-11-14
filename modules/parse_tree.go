@@ -11,13 +11,12 @@ import (
 func isInt(me *tree.Atomic) bool {
 	fmt.Println("me.K.Type:", me.K.Type)
 
-	return me.K.Type&1 != 0 //0非整数， 1整数
+	return me.K.Type%2 != 0 //0非整数， 1整数
 }
 
 func isNested(me *tree.Atomic) bool {
-	me.K.Type >>= 1
 
-	return me.K.Type&1 != 0 //0非嵌套， 1嵌套
+	return me.K.Type/2 != 0 //0非嵌套， 1嵌套
 }
 
 var boolQuery *elastic.BoolQuery
