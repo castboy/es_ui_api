@@ -5,3 +5,4 @@ Proto      Xdr.Conn.Proto                           object          2
 Date	   Xdr.TimeAppend                           object          2
 Attack     Attack                                   object          0
 Severity   SeverityAppend                           object          0
+Alert      Type                                     object          0
