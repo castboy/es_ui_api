@@ -90,9 +90,11 @@ func AtomicExpr(me *tree.Atomic) interface{} {
 		}
 	case tree.OpInclude:
 		if me.K.Scope == tree.ScopeAll {
-			v = elastic.NewFuzzyQuery("_all", me.V)
+			v = elastic.NewQueryStringQuery(me.V).DefaultField("_all").DefaultOperator("AND")
+			//			v = elastic.NewFuzzyQuery("_all", me.V)
 		} else {
-			v = elastic.NewFuzzyQuery(me.K.Name, me.V)
+			//			v = elastic.NewFuzzyQuery(me.K.Name, me.V)
+			v = elastic.NewQueryStringQuery(me.V).DefaultField(me.K.Name).DefaultOperator("AND")
 		}
 	case tree.OpNeq:
 		if isInt(me) {
