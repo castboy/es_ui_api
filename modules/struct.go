@@ -121,8 +121,8 @@ type BackendObj struct {
 		Url string `json:Url`
 	}
 	App struct {
-		File string `json:"File,omitempty"`
-	} `json:"App,omitempty"`
+		File string `json:"File"`
+	} `json:"App"`
 }
 
 type Conn_backend struct {
@@ -144,9 +144,9 @@ type WafAlertRule struct {
 }
 
 type IpInfo struct {
-	Country  string `json:"Country,omitempty"`
-	Province string `json:"Province,omitempty"`
-	City     string `json:"City,omitempty"`
-	Lng      string `json:"Lng,omitempty"`
-	Lat      string `json:"Lat,omitempty"`
+	Country  string `json:"Country"`
+	Province string `json:"Province"`
+	City     string `json:"City"`
+	Lng      string `json:"Lng"`
+	Lat      string `json:"Lat"`
 }
