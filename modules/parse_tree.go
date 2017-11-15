@@ -55,13 +55,13 @@ func BeJson(query elastic.Query) {
 func BoolExpr(me *tree.Expr, query []elastic.Query) *elastic.BoolQuery {
 	switch me.Logic {
 	case tree.LogicAnd:
-		return elastic.NewBoolQuery().Must(query...).MinimumShouldMatch("1")
+		return elastic.NewBoolQuery().Must(query...)
 	case tree.LogicOr:
-		return elastic.NewBoolQuery().Should(query...).MinimumShouldMatch("1")
+		return elastic.NewBoolQuery().Should(query...)
 	case tree.LogicNot:
-		return elastic.NewBoolQuery().MustNot(query...).MinimumShouldMatch("1")
+		return elastic.NewBoolQuery().MustNot(query...)
 	default:
-		return elastic.NewBoolQuery().Must(query...).MinimumShouldMatch("1")
+		return elastic.NewBoolQuery().Must(query...)
 	}
 
 	return nil
