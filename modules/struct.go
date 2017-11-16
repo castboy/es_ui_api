@@ -7,7 +7,7 @@ type ResIds struct {
 	Severity string
 	Engine   string
 	Type     string
-	Conn     ConnInfo
+	ConnInfo
 }
 
 type ResWaf struct {
@@ -28,7 +28,7 @@ type ResWaf struct {
 	Version   string
 	Operators string
 	Type      string
-	Conn      ConnInfo
+	ConnInfo
 }
 
 type ResVds struct {
@@ -46,7 +46,7 @@ type ResVds struct {
 	HttpUrl          string
 	Filepath         string
 	Type             string
-	Conn             ConnInfo
+	ConnInfo
 }
 
 type SrcVds struct {

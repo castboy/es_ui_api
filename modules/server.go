@@ -139,7 +139,7 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 		Rule:      src.Rule,
 		Version:   src.Version,
 		Time:      src.Xdr[0].TimeAppend,
-		Conn: ConnInfo{
+		ConnInfo: ConnInfo{
 			Proto:        src.Xdr[0].Conn.ProtoAppend,
 			Dest_ip:      src.Xdr[0].Conn.Dip,
 			Dest_port:    src.Xdr[0].Conn.Dport,
@@ -176,7 +176,7 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 		Time:             src.Xdr[0].TimeAppend,
 		HttpUrl:          src.Xdr[0].Http.Url,
 		Filepath:         src.Xdr[0].App.File,
-		Conn: ConnInfo{
+		ConnInfo: ConnInfo{
 			Proto:        src.Xdr[0].Conn.ProtoAppend,
 			Dest_ip:      src.Xdr[0].Conn.Dip,
 			Dest_port:    src.Xdr[0].Conn.Dport,
@@ -204,7 +204,7 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 		Details:  "",
 		Severity: src.SeverityAppend,
 		Engine:   src.Engine,
-		Conn: ConnInfo{
+		ConnInfo: ConnInfo{
 			Src_ip:       src.Xdr[0].Conn.Sip,
 			Src_port:     src.Xdr[0].Conn.Sport,
 			Src_ip_info:  src.Xdr[0].Conn.SipInfo,
