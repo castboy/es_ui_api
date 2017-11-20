@@ -12,9 +12,15 @@ import (
 
 var EsClient *elastic.Client
 
-func Cli(nodes []string) {
+func Cli(nodes []string, port string) {
 	var err error
-	EsClient, err = elastic.NewClient(elastic.SetURL(nodes...))
+	var nodePort []string
+
+	for _, v := range nodes {
+		nodePort = append(nodePort, v+port)
+	}
+
+	EsClient, err = elastic.NewClient(elastic.SetURL(nodePort...))
 	if err != nil {
 		log.Fatal("init es client err")
 	}
