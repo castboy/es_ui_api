@@ -17,7 +17,7 @@ func Cli(nodes []string, port string) {
 	var nodePort []string
 
 	for _, v := range nodes {
-		nodePort = append(nodePort, v+port)
+		nodePort = append(nodePort, v+":"+port)
 	}
 
 	EsClient, err = elastic.NewClient(elastic.SetURL(nodePort...))
