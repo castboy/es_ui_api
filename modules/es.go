@@ -10,21 +10,21 @@ import (
 	"gopkg.in/olivere/elastic.v5"
 )
 
-func Cli() *elastic.Client {
-	client, err := elastic.NewClient()
-	if err != nil {
-		log.Fatal("please conf es-cluster-api-host in: GOPATH/src/gopkg.inolivere/elastic.v5/client.go  --line 30")
-	}
+var EsClient *elastic.Client
 
-	return client
+func Cli(nodes []string) {
+	var err error
+	EsClient, err = elastic.NewClient(elastic.SetURL(nodes...))
+	if err != nil {
+		log.Fatal("init es client err")
+	}
 }
 
 func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 	ctx := context.Background()
-	client := Cli()
 	fetchSrcCtx := FetchSrcCtx(p)
 
-	res, err := client.Search().
+	res, err := EsClient.Search().
 		Index(ES_INDEX_ALERT).
 		Type(EsType[p.T]).
 		Query(body).
