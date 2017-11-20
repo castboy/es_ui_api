@@ -14,16 +14,13 @@ import (
 var exprBuildinKeywords = map[string]*tree.Keyword{}
 var abbreviations = make([]string, 0)
 
-func Read() []string {
+func Read(file string) []string {
 	var fi *os.File
 	var err error
 
-	fi, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/castboy/es_ui_api/modules/register_keyword")
+	fi, err = os.Open(file)
 	if err != nil {
-		fi, err = os.Open(os.Getenv("GOPATH") + "\\src\\github.com\\castboy\\es_ui_api\\modules\\register_keyword")
-		if nil != err {
-			log.Fatal("register_keyword not exist")
-		}
+		log.Fatal("can not find register_keyword file")
 	}
 	defer fi.Close()
 
@@ -82,8 +79,8 @@ func Load(ab []string) {
 	}
 }
 
-func RegisterKeyword() {
-	abs := Read()
+func RegisterKeyword(file string) {
+	abs := Read(file)
 	Load(abs)
 
 	for _, v := range exprBuildinKeywords {
