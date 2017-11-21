@@ -41,7 +41,7 @@ func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 		Do(ctx)
 
 	if nil != err {
-		fmt.Println("Query Exe Err")
+		Log("ERR", "es query exe err")
 	}
 
 	return res.Hits
@@ -87,7 +87,7 @@ func EsRes(p *Params, e *tree.Expr) *elastic.SearchHits {
 	i, _ := body.Source()
 
 	bytes, _ := json.Marshal(i)
-	fmt.Println(string(bytes))
+	Log("INF", "es query exe: %s", string(bytes))
 
 	return Query(p, body)
 }
