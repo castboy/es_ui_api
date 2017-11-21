@@ -20,7 +20,8 @@ func Read(file string) []string {
 
 	fi, err = os.Open(file)
 	if err != nil {
-		log.Fatal("can not find register_keyword file")
+		Log("CRT", "can not find register_keyword file: %s", file)
+		log.Fatal(EXIT)
 	}
 	defer fi.Close()
 
@@ -43,7 +44,9 @@ func parseType(str string) (t int) {
 		return t
 	}
 
-	log.Fatal("mapping file err: wrong type, must: -1 < type < 4")
+	Log("CRT", "%s", "register_keyword file err: wrong type, must: -1 < type < 4, you give %d", t)
+	log.Fatal(EXIT)
+
 	return -1
 }
 

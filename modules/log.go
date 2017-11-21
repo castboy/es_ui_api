@@ -1,30 +1,37 @@
 package modules
 
 import (
-	"os"
+	"log"
 
 	seelog "github.com/cihub/seelog"
 )
 
 func InitLog() {
-	logger, err := seelog.LoggerFromConfigAsFile(os.Getenv("GOPATH") + "/src/github.com/castboy/es_ui_api/modules/seelog.xml")
+	logger, err := seelog.LoggerFromConfigAsFile("conf/seelog.xml")
 
 	if err != nil {
-		seelog.Critical("err parsing config log file", err)
-		return
+		log.Fatal("Log Configuration File conf/seelog.xml Does Not Exist")
 	}
 	seelog.ReplaceLogger(logger)
 }
 
-func Log(level string, content string) {
+func Log(level string, format string, s ...interface{}) {
 	defer seelog.Flush()
 
 	switch level {
-	case "Err":
-		seelog.Error(content)
-	case "Debug":
-		seelog.Debug(content)
-	case "Info":
-		seelog.Info(content)
+	case "TRC":
+		seelog.Tracef(format, s)
+	case "DBG":
+		seelog.Debugf(format, s)
+	case "INF":
+		seelog.Infof(format, s)
+	case "WRN":
+		seelog.Warnf(format, s)
+	case "ERR":
+		seelog.Errorf(format, s)
+	case "CRT":
+		seelog.Criticalf(format, s)
+	default:
+		panic("wrong log type")
 	}
 }

@@ -22,7 +22,8 @@ func Cli(nodes []string, port string) {
 
 	EsClient, err = elastic.NewClient(elastic.SetURL(nodePort...))
 	if err != nil {
-		log.Fatal("init es client err")
+		Log("CRT", "new es client failed, nodes: %s", nodes)
+		log.Fatal(EXIT)
 	}
 }
 

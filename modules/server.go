@@ -45,6 +45,7 @@ func (p *Params) ParseEsType(r *http.Request) *Params {
 	} else {
 		p.T = Multi
 	}
+	Log("INF", "req type is: %s", EsType[p.T])
 
 	return p
 }
@@ -54,14 +55,17 @@ func (p *Params) ParseQuery(r *http.Request) *Params {
 		s, err := base64.StdEncoding.DecodeString(val[0])
 		if nil != err {
 			p.Err = ERR_DECODE_BASE64
+			Log("ERR", "parseQuery decode_base64 err %s", p.Err)
 
 			return p
 		}
 		p.Query = string(s)
+		Log("INF", "query is: %s", p.Query)
 
 		return p
 	}
 	p.Err = ERR_HTTP_REQ
+	Log("ERR", "parseQuery err: %s", p.Err.Error())
 
 	return p
 }
@@ -71,14 +75,17 @@ func (p *Params) ParseFrom(r *http.Request) *Params {
 		from, err := strconv.Atoi(val[0])
 		if nil != err {
 			p.Err = ERR_HTTP_REQ
+			Log("ERR", "parseFrom err: %s", p.Err.Error())
 
 			return p
 		}
 		p.From = from
+		Log("INF", "from is: %d", p.From)
 
 		return p
 	}
 	p.Err = ERR_HTTP_REQ
+	Log("ERR", "parseFrom err: %s", p.Err.Error())
 
 	return p
 }
@@ -88,14 +95,17 @@ func (p *Params) ParseSize(r *http.Request) *Params {
 		size, err := strconv.Atoi(val[0])
 		if nil != err {
 			p.Err = ERR_HTTP_REQ
+			Log("ERR", "parseSize err: %s", p.Err.Error())
 
 			return p
 		}
 		p.Size = size
+		Log("INF", "size is: %d", p.Size)
 
 		return p
 	}
 	p.Err = ERR_HTTP_REQ
+	Log("ERR", "parseSize err: %s", p.Err.Error())
 
 	return p
 }
@@ -287,8 +297,6 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		res = ResStruct(0, nil, WRONG)
 	} else {
 		e, err := RecoverLineExpr(p)
-		fmt.Println("e:", e)
-		fmt.Println("err:", err)
 		if nil == e {
 			switch err {
 			case ErrExprType[NOT_CLOSE_QUOTES_SINGLE]:
