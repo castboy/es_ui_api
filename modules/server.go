@@ -321,4 +321,6 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	s := ApiRes(res)
 
 	io.WriteString(w, *s)
+
+	Log("INF", "query res: %s", s)
 }
