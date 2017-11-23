@@ -41,7 +41,7 @@ func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 		Do(ctx)
 
 	if nil != err {
-		Log("ERR", "%s", "es query exe err")
+		Log("ERR", "es query exe err%s", err.Error())
 	}
 
 	return res.Hits
