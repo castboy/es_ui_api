@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/olivere/elastic.v5"
@@ -28,102 +28,51 @@ type Res struct {
 
 type ResApi []interface{}
 
-func (p *Params) ParseEsType(r *http.Request) *Params {
-	if val, ok := r.Form["type"]; ok {
-		switch val[0] {
-		case EsType[Waf]:
-			p.T = Waf
-		case EsType[Vds]:
-			p.T = Vds
-		case EsType[Ids]:
-			p.T = Ids
-		case EsType[Multi]:
-			p.T = Multi
-		default:
-			panic(PANIC_UNKNOW_ALERT)
-		}
-	} else {
-		p.T = Multi
-	}
-	Log("INF", "req type is: %s", EsType[p.T])
+func (p *Params) ParseEsType() *Params {
 
 	return p
 }
 
-func (p *Params) ParseQuery(r *http.Request) *Params {
-	if val, ok := r.Form["query"]; ok {
-		s, err := base64.StdEncoding.DecodeString(val[0])
-		if nil != err {
-			p.Err = ERR_DECODE_BASE64
-			Log("ERR", "parseQuery decode_base64 err %s", p.Err)
-
-			return p
-		}
-		p.Query = string(s)
-		Log("INF", "query is: %s", p.Query)
+func (p *Params) ParseQuery() *Params {
+	s, err := base64.StdEncoding.DecodeString(p.Query)
+	if nil != err {
+		p.Err = ERR_DECODE_BASE64
+		Log("ERR", "parseQuery decode_base64 err %s", p.Err)
 
 		return p
 	}
-	p.Err = ERR_HTTP_REQ
-	Log("ERR", "parseQuery err: %s", p.Err.Error())
+	p.Query = string(s)
+	Log("INF", "query is: %s", p.Query)
 
 	return p
 }
 
-func (p *Params) ParseFrom(r *http.Request) *Params {
-	if val, ok := r.Form["from"]; ok {
-		from, err := strconv.Atoi(val[0])
-		if nil != err {
-			p.Err = ERR_HTTP_REQ
-			Log("ERR", "parseFrom err: %s", p.Err.Error())
-
-			return p
-		}
-		p.From = from
-		Log("INF", "from is: %d", p.From)
-
-		return p
-	}
-	p.Err = ERR_HTTP_REQ
-	Log("ERR", "parseFrom err: %s", p.Err.Error())
+func (p *Params) ParseFrom() *Params {
+	Log("INF", "from is: %d", p.From)
 
 	return p
 }
 
-func (p *Params) ParseSize(r *http.Request) *Params {
-	if val, ok := r.Form["size"]; ok {
-		size, err := strconv.Atoi(val[0])
-		if nil != err {
-			p.Err = ERR_HTTP_REQ
-			Log("ERR", "parseSize err: %s", p.Err.Error())
-
-			return p
-		}
-		p.Size = size
-		Log("INF", "size is: %d", p.Size)
-
-		return p
-	}
-	p.Err = ERR_HTTP_REQ
-	Log("ERR", "parseSize err: %s", p.Err.Error())
+func (p *Params) ParseSize() *Params {
+	Log("INF", "size is: %d", p.Size)
 
 	return p
 }
 
 func ParseReq(r *http.Request) (*Params, error) {
-	err := r.ParseForm()
-	p := ParseParams(r)
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+
+	var params Params
+	json.Unmarshal(body, &params)
+
+	p := params.ParseEsType().ParseQuery().ParseFrom().ParseSize()
+
 	if nil != err || nil != p.Err {
 		return nil, ERR_HTTP_REQ
 	}
 
 	return p, nil
-}
-
-func ParseParams(r *http.Request) *Params {
-	var p Params
-
-	return p.ParseEsType(r).ParseQuery(r).ParseFrom(r).ParseSize(r)
 }
 
 func ApiResWaf(hit *elastic.SearchHit) interface{} {
