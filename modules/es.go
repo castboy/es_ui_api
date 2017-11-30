@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	tree "go-study/expr2"
-	"log"
 
 	"gopkg.in/olivere/elastic.v5"
 )

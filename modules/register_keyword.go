@@ -5,7 +5,6 @@ import (
 	"fmt"
 	tree "go-study/expr2"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -44,7 +43,6 @@ func parseType(str string) (t int) {
 	}
 
 	Log("CRT", "%s", "register_keyword file err: wrong type, must: -1 < type < 4, you give %d", t)
-	log.Fatal(EXIT)
 
 	return -1
 }
