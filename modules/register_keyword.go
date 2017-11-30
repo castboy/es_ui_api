@@ -21,7 +21,6 @@ func Read(file string) []string {
 	fi, err = os.Open(file)
 	if err != nil {
 		Log("CRT", "can not find register_keyword file: %s", file)
-		log.Fatal(EXIT)
 	}
 	defer fi.Close()
 

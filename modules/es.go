@@ -23,7 +23,6 @@ func Cli(nodes []string, port string) {
 	EsClient, err = elastic.NewClient(elastic.SetURL(nodePort...))
 	if err != nil {
 		Log("CRT", "new es client failed, nodes: %s", nodes)
-		log.Fatal(EXIT)
 	}
 }
 
@@ -33,7 +32,7 @@ func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 
 	res, err := EsClient.Search().
 		Index(ES_INDEX_ALERT).
-		Type(EsType[p.T]).
+		//		Type(EsType[p.T]).
 		Query(body).
 		FetchSourceContext(fetchSrcCtx).
 		From(p.From).Size(p.Size).
@@ -41,7 +40,7 @@ func Query(p *Params, body elastic.Query) *elastic.SearchHits {
 		Do(ctx)
 
 	if nil != err {
-		Log("ERR", "es query exe err%s", err.Error())
+		Log("ERR", "es query exe %s", err.Error())
 	}
 
 	return res.Hits

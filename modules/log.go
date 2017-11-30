@@ -6,6 +6,8 @@ import (
 	seelog "github.com/cihub/seelog"
 )
 
+var exit = "Shut down due to critical fault."
+
 func InitLog() {
 	logger, err := seelog.LoggerFromConfigAsFile("conf/seelog.xml")
 
@@ -31,6 +33,7 @@ func Log(level string, format string, s ...interface{}) {
 		seelog.Errorf(format, s)
 	case "CRT":
 		seelog.Criticalf(format, s)
+		log.Fatal(exit)
 	default:
 		panic("wrong log type")
 	}

@@ -12,5 +12,3 @@ var PANIC_UNKNOW_ALERT = "Unknow Alert Type"
 var PANIC_UNKNOW_OPERATOR = "Undefine Operator"
 var PANIC_SEARCH_SCOPE = "Unknow search scope"
 var PANIC_UNKNOW_ERR_EXPR = "Unknow Expr Err"
-
-var EXIT = "Shut down due to critical fault."
