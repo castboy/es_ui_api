@@ -29,7 +29,7 @@ type CurlRes struct {
 }
 
 type HitsOuter struct {
-	Total int       `json:"total"`
+	Total int64     `json:"total"`
 	Hits  HitsInner `json:"hits"`
 }
 
@@ -40,6 +40,8 @@ type OneResComplete struct {
 }
 
 type OneResSource interface{}
+
+type ResHits []OneResSource
 
 func Cli(nodes []string, port string) {
 	var err error
@@ -55,32 +57,31 @@ func Cli(nodes []string, port string) {
 	}
 }
 
-func Query(body string) string {
+func Query(body string) Res {
 	b := bytes.NewBuffer([]byte(body))
 	res, err := http.Post("http://10.88.1.102:9200/apt/_search", "application/json;charset=utf-8", b)
 	if err != nil {
 		log.Fatal(err)
-		return ""
 	}
 	result, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		log.Fatal(err)
-		return ""
 	}
 
 	var curlRes CurlRes
 
 	json.Unmarshal(result, &curlRes)
 
-	fmt.Println(curlRes.Hits.Total)
+	fmt.Println()
 
-	//	var one OneResComplete
+	var resHits ResHits
+
 	for _, v := range curlRes.Hits.Hits {
-		fmt.Println(v.Source)
+		resHits = append(resHits, v.Source)
 	}
 
-	return string(result)
+	return ResStruct(curlRes.Hits.Total, resHits, 0)
 }
 
 func IncludesItems(p *Params) []string {
@@ -117,7 +118,7 @@ func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 	return expr, ""
 }
 
-func EsRes(p *Params, e *tree.Expr) string {
+func EsRes(p *Params, e *tree.Expr) Res {
 
 	body := Expr(e)
 	i, _ := body.Source()

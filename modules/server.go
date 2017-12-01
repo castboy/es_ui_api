@@ -262,9 +262,7 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				res = ResStruct(0, nil, ERR_EXPRESS)
 			}
 		} else {
-			hits := EsRes(p, e)
-			fmt.Println(hits)
-			//			res = ResStruct(hits.TotalHits, Hits(hits, *p), SUCCESS)
+			res = EsRes(p, e)
 		}
 	}
 
