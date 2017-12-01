@@ -7,7 +7,7 @@ import (
 	"fmt"
 	tree "go-study/expr2"
 	"io/ioutil"
-	"log"
+	//	"log"
 	"net/http"
 
 	"gopkg.in/olivere/elastic.v5"
@@ -43,6 +43,8 @@ type OneResSource interface{}
 
 type ResHits []OneResSource
 
+var NodesSlice []string
+
 func Cli(nodes []string, port string) {
 	var err error
 	var nodePort []string
@@ -57,23 +59,37 @@ func Cli(nodes []string, port string) {
 	}
 }
 
+func Nodes(nodes []string) {
+	NodesSlice = nodes
+}
+
 func Query(body string) Res {
+	var err error
+	var res *http.Response
+
 	b := bytes.NewBuffer([]byte(body))
-	res, err := http.Post("http://10.88.1.102:9200/apt/_search", "application/json;charset=utf-8", b)
+	res, err = http.Post("http://"+NodesSlice[0]+":9200/apt/_search", "application/json;charset=utf-8", b)
 	if err != nil {
-		log.Fatal(err)
+		Log("ERR", "node can not run: %", NodesSlice[0])
+		res, err = http.Post("http://"+NodesSlice[1]+":9200/apt/_search", "application/json;charset=utf-8", b)
+		if err != nil {
+			Log("ERR", "node can not run: %", NodesSlice[1])
+			res, err = http.Post("http://"+NodesSlice[2]+":9200/apt/_search", "application/json;charset=utf-8", b)
+			if nil != err {
+				Log("CRT", "%s", "all es node can not run")
+			}
+		}
 	}
+
 	result, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		log.Fatal(err)
+		Log("WRN", "%s", "ReadAll(res.Body)")
 	}
 
 	var curlRes CurlRes
 
 	json.Unmarshal(result, &curlRes)
-
-	fmt.Println()
 
 	var resHits ResHits
 
