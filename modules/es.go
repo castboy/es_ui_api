@@ -77,7 +77,9 @@ func Query(body string) string {
 
 	//	var one OneResComplete
 	for _, v := range curlRes.Hits.Hits {
-		fmt.Println(v)
+		s := fmt.Sprintf("%v", v)
+		fmt.Println(s)
+		//		fmt.Println(v)
 		//		json.Unmarshal([]byte(v), &one)
 		//		fmt.Println(one.Source)
 	}
