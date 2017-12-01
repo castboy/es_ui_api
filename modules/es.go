@@ -43,6 +43,10 @@ type OneResSource interface{}
 
 type ResHits []OneResSource
 
+type ResHitsType struct {
+	Type string
+}
+
 var NodesSlice []string
 
 func Cli(nodes []string, port string) {
@@ -63,9 +67,10 @@ func Nodes(nodes []string) {
 	NodesSlice = nodes
 }
 
-func Query(body string) Res {
+func CurlEs(body string) ([]byte, error) {
 	var err error
 	var res *http.Response
+	var result []byte
 
 	b := bytes.NewBuffer([]byte(body))
 	res, err = http.Post("http://"+NodesSlice[0]+":9200/apt/_search", "application/json;charset=utf-8", b)
@@ -81,23 +86,38 @@ func Query(body string) Res {
 		}
 	}
 
-	result, err := ioutil.ReadAll(res.Body)
+	result, err = ioutil.ReadAll(res.Body)
 	res.Body.Close()
-	if err != nil {
-		Log("WRN", "%s", "ReadAll(res.Body)")
-	}
 
+	return result, err
+}
+
+func Query(body string) Res {
+	var resHitsType ResHitsType
+	var res []interface{}
 	var curlRes CurlRes
 
-	json.Unmarshal(result, &curlRes)
+	result, err := CurlEs(body)
+	if nil != err {
+		Log("ERR", "%s", "CurlEs res.Body")
+	} else {
+		json.Unmarshal(result, &curlRes)
 
-	var resHits ResHits
-
-	for _, v := range curlRes.Hits.Hits {
-		resHits = append(resHits, v.Source)
+		for _, v := range curlRes.Hits.Hits {
+			bytes, _ := json.Marshal(v.Source)
+			json.Unmarshal(bytes, &resHitsType)
+			switch resHitsType.Type {
+			case "waf":
+				res = append(res, ApiResWaf(bytes))
+			case "vds":
+				res = append(res, ApiResVds(bytes))
+			case "ids":
+				res = append(res, ApiResIds(bytes))
+			}
+		}
 	}
 
-	return ResStruct(curlRes.Hits.Total, resHits, 0)
+	return ResStruct(curlRes.Hits.Total, res, 0)
 }
 
 func IncludesItems(p *Params) []string {

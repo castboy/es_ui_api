@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"gopkg.in/olivere/elastic.v5"
 )
 
 type Params struct {
@@ -75,9 +74,9 @@ func ParseReq(r *http.Request) (*Params, error) {
 	return p, nil
 }
 
-func ApiResWaf(hit *elastic.SearchHit) interface{} {
+func ApiResWaf(b []byte) interface{} {
 	var src SrcWaf
-	err := json.Unmarshal(*hit.Source, &src)
+	err := json.Unmarshal(b, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
@@ -114,9 +113,9 @@ func ApiResWaf(hit *elastic.SearchHit) interface{} {
 	return resWaf
 }
 
-func ApiResVds(hit *elastic.SearchHit) interface{} {
+func ApiResVds(b []byte) interface{} {
 	var src SrcVds
-	err := json.Unmarshal(*hit.Source, &src)
+	err := json.Unmarshal(b, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
@@ -150,9 +149,9 @@ func ApiResVds(hit *elastic.SearchHit) interface{} {
 	return resVds
 }
 
-func ApiResIds(hit *elastic.SearchHit) interface{} {
+func ApiResIds(b []byte) interface{} {
 	var src SrcIds
-	err := json.Unmarshal(*hit.Source, &src)
+	err := json.Unmarshal(b, &src)
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
@@ -176,40 +175,6 @@ func ApiResIds(hit *elastic.SearchHit) interface{} {
 	}
 
 	return resIds
-}
-
-func (res *ResApi) ResMulti(hits *elastic.SearchHits) {
-	for _, hit := range hits.Hits {
-		switch hit.Type {
-		case EsType[Waf]:
-			*res = append(*res, ApiResWaf(hit))
-		case EsType[Vds]:
-			*res = append(*res, ApiResVds(hit))
-		case EsType[Ids]:
-			*res = append(*res, ApiResIds(hit))
-		default:
-			panic(PANIC_UNKNOW_ALERT)
-		}
-	}
-}
-
-func (res *ResApi) ResSingle(hits *elastic.SearchHits, p Params) {
-	switch p.T {
-	case Waf:
-		res.SingleRes(hits, ApiResWaf)
-	case Vds:
-		res.SingleRes(hits, ApiResVds)
-	case Ids:
-		res.SingleRes(hits, ApiResIds)
-	default:
-		panic(PANIC_UNKNOW_ALERT)
-	}
-}
-
-func (res *ResApi) SingleRes(hits *elastic.SearchHits, f func(hit *elastic.SearchHit) interface{}) {
-	for _, hit := range hits.Hits {
-		*res = append(*res, f(hit))
-	}
 }
 
 func ResStruct(total int64, hits interface{}, code ResCode) Res {
