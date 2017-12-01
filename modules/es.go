@@ -33,7 +33,13 @@ type HitsOuter struct {
 	Hits  HitsInner `json:"hits"`
 }
 
-type HitsInner interface{}
+type HitsInner []OneResComplete
+
+type OneResComplete struct {
+	Source OneResSource `json:"_source"`
+}
+
+type OneResSource interface{}
 
 func Cli(nodes []string, port string) {
 	var err error
@@ -68,7 +74,13 @@ func Query(body string) string {
 	json.Unmarshal(result, &curlRes)
 
 	fmt.Println(curlRes.Hits.Total)
-	fmt.Println(curlRes.Hits.Hits)
+
+	//	var one OneResComplete
+	for _, v := range curlRes.Hits.Hits {
+		fmt.Println(v)
+		//		json.Unmarshal([]byte(v), &one)
+		//		fmt.Println(one.Source)
+	}
 
 	return string(result)
 }
