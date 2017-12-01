@@ -27,6 +27,38 @@ type Res struct {
 
 type ResApi []interface{}
 
+type CurlBody struct {
+	From  int         `json:"from"`
+	Size  int         `json:"size"`
+	Query interface{} `json:"query"`
+}
+
+type CurlRes struct {
+	Took     int  `json:"took"`
+	Time_out bool `time_out`
+	_shards  interface{}
+	Hits     HitsOuter `json:"hits"`
+}
+
+type HitsOuter struct {
+	Total int64     `json:"total"`
+	Hits  HitsInner `json:"hits"`
+}
+
+type HitsInner []OneResComplete
+
+type OneResComplete struct {
+	Source OneResSource `json:"_source"`
+}
+
+type OneResSource interface{}
+
+type ResHits []OneResSource
+
+type ResHitsType struct {
+	Type string
+}
+
 func (p *Params) ParseEsType() *Params {
 
 	return p
@@ -191,6 +223,29 @@ func ApiRes(i interface{}) *string {
 	return &res
 }
 
+func ResLast(result []byte) Res {
+	var resHitsType ResHitsType
+	var res []interface{}
+	var curlRes CurlRes
+
+	json.Unmarshal(result, &curlRes)
+
+	for _, v := range curlRes.Hits.Hits {
+		bytes, _ := json.Marshal(v.Source)
+		json.Unmarshal(bytes, &resHitsType)
+		switch resHitsType.Type {
+		case "waf":
+			res = append(res, ApiResWaf(bytes))
+		case "vds":
+			res = append(res, ApiResVds(bytes))
+		case "ids":
+			res = append(res, ApiResIds(bytes))
+		}
+	}
+
+	return ResStruct(curlRes.Hits.Total, res, 0)
+}
+
 func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var res Res
 
@@ -215,7 +270,12 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				res = ResStruct(0, nil, ERR_EXPRESS)
 			}
 		} else {
-			res = EsRes(p, e)
+			bytes, err := EsRes(p, e)
+			if nil != err {
+				Log("ERR", "%s", "CurlEs res.Body")
+			} else {
+				res = ResLast(bytes)
+			}
 		}
 	}
 

@@ -14,39 +14,6 @@ import (
 )
 
 var EsClient *elastic.Client
-
-type CurlBody struct {
-	From  int         `json:"from"`
-	Size  int         `json:"size"`
-	Query interface{} `json:"query"`
-}
-
-type CurlRes struct {
-	Took     int  `json:"took"`
-	Time_out bool `time_out`
-	_shards  interface{}
-	Hits     HitsOuter `json:"hits"`
-}
-
-type HitsOuter struct {
-	Total int64     `json:"total"`
-	Hits  HitsInner `json:"hits"`
-}
-
-type HitsInner []OneResComplete
-
-type OneResComplete struct {
-	Source OneResSource `json:"_source"`
-}
-
-type OneResSource interface{}
-
-type ResHits []OneResSource
-
-type ResHitsType struct {
-	Type string
-}
-
 var NodesSlice []string
 
 func Cli(nodes []string, port string) {
@@ -63,11 +30,7 @@ func Cli(nodes []string, port string) {
 	}
 }
 
-func Nodes(nodes []string) {
-	NodesSlice = nodes
-}
-
-func CurlEs(body string) ([]byte, error) {
+func Query(body string) ([]byte, error) {
 	var err error
 	var res *http.Response
 	var result []byte
@@ -90,34 +53,6 @@ func CurlEs(body string) ([]byte, error) {
 	res.Body.Close()
 
 	return result, err
-}
-
-func Query(body string) Res {
-	var resHitsType ResHitsType
-	var res []interface{}
-	var curlRes CurlRes
-
-	result, err := CurlEs(body)
-	if nil != err {
-		Log("ERR", "%s", "CurlEs res.Body")
-	} else {
-		json.Unmarshal(result, &curlRes)
-
-		for _, v := range curlRes.Hits.Hits {
-			bytes, _ := json.Marshal(v.Source)
-			json.Unmarshal(bytes, &resHitsType)
-			switch resHitsType.Type {
-			case "waf":
-				res = append(res, ApiResWaf(bytes))
-			case "vds":
-				res = append(res, ApiResVds(bytes))
-			case "ids":
-				res = append(res, ApiResIds(bytes))
-			}
-		}
-	}
-
-	return ResStruct(curlRes.Hits.Total, res, 0)
 }
 
 func IncludesItems(p *Params) []string {
@@ -154,7 +89,7 @@ func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 	return expr, ""
 }
 
-func EsRes(p *Params, e *tree.Expr) Res {
+func EsRes(p *Params, e *tree.Expr) ([]byte, error) {
 
 	body := Expr(e)
 	i, _ := body.Source()
