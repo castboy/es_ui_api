@@ -21,7 +21,7 @@ type CurlBody struct {
 	Query interface{} `json:"query"`
 }
 
-var CurlRes struct {
+type CurlRes struct {
 	Took     int  `json:"took"`
 	Time_out bool `time_out`
 	_shards  interface{}
@@ -55,6 +55,12 @@ func Query(body string) string {
 		log.Fatal(err)
 		return ""
 	}
+
+	var curlRes CurlRes
+
+	json.Unmarshal(result, &curlRes)
+
+	fmt.Println(curlRes.Hits)
 
 	return string(result)
 }
