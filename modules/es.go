@@ -1,15 +1,32 @@
 package modules
 
 import (
-	"context"
+	//	"context"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	tree "go-study/expr2"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"gopkg.in/olivere/elastic.v5"
 )
 
 var EsClient *elastic.Client
+
+type CurlBody struct {
+	From  int         `json:"from"`
+	Size  int         `json:"size"`
+	Query interface{} `json:"query"`
+}
+
+var CurlRes struct {
+	Took     int  `json:"took"`
+	Time_out bool `time_out`
+	_shards  interface{}
+	Hits     interface{} `hits`
+}
 
 func Cli(nodes []string, port string) {
 	var err error
@@ -25,24 +42,21 @@ func Cli(nodes []string, port string) {
 	}
 }
 
-func Query(p *Params, body elastic.Query) *elastic.SearchHits {
-	ctx := context.Background()
-	fetchSrcCtx := FetchSrcCtx(p)
-
-	res, err := EsClient.Search().
-		Index(ES_INDEX_ALERT).
-		//		Type(EsType[p.T]).
-		Query(body).
-		FetchSourceContext(fetchSrcCtx).
-		From(p.From).Size(p.Size).
-		Pretty(true).
-		Do(ctx)
-
-	if nil != err {
-		Log("ERR", "es query exe %s", err.Error())
+func Query(body string) string {
+	b := bytes.NewBuffer([]byte(body))
+	res, err := http.Post("10.88.1.102:9200/apt/_search", "application/json;charset=utf-8", b)
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+	result, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		log.Fatal(err)
+		return ""
 	}
 
-	return res.Hits
+	return string(result)
 }
 
 func IncludesItems(p *Params) []string {
@@ -79,13 +93,19 @@ func RecoverLineExpr(p *Params) (expr *tree.Expr, err ExprErr) {
 	return expr, ""
 }
 
-func EsRes(p *Params, e *tree.Expr) *elastic.SearchHits {
+func EsRes(p *Params, e *tree.Expr) string {
 
 	body := Expr(e)
 	i, _ := body.Source()
 
-	bytes, _ := json.Marshal(i)
-	Log("INF", "es query exe: %s", string(bytes))
+	curlBody := CurlBody{
+		From:  p.From,
+		Size:  p.Size,
+		Query: i,
+	}
 
-	return Query(p, body)
+	bytes, _ := json.Marshal(curlBody)
+	Log("INF", "es query exe: %s")
+
+	return Query(string(bytes))
 }
