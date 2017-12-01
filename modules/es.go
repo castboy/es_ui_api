@@ -16,6 +16,9 @@ import (
 var EsClient *elastic.Client
 var NodesSlice []string
 
+func Nodes(nodes []string) {
+	NodesSlice = nodes
+}
 func Cli(nodes []string, port string) {
 	var err error
 	var nodePort []string
