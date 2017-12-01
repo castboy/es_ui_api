@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	//	"io"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -266,10 +266,9 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 	}
 
-	fmt.Println(res)
-	//	s := ApiRes(res)
+	s := ApiRes(res)
 
-	//	io.WriteString(w, *s)
+	io.WriteString(w, *s)
 
-	//	Log("INF", "query res: %s", *s)
+	Log("INF", "query res: %s", *s)
 }
