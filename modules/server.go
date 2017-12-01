@@ -212,17 +212,17 @@ func (res *ResApi) SingleRes(hits *elastic.SearchHits, f func(hit *elastic.Searc
 	}
 }
 
-func Hits(hits *elastic.SearchHits, p Params) ResApi {
-	var res ResApi
+//func Hits(hits *elastic.SearchHits, p Params) ResApi {
+//	var res ResApi
 
-	if p.T == Multi {
-		res.ResMulti(hits)
-	} else {
-		res.ResSingle(hits, p)
-	}
+//	if p.T == Multi {
+//		res.ResMulti(hits)
+//	} else {
+//		res.ResSingle(hits, p)
+//	}
 
-	return res
-}
+//	return res
+//}
 
 func ResStruct(total int64, hits interface{}, code ResCode) Res {
 	return Res{Total: total, Hits: hits, Code: code}

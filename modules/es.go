@@ -25,8 +25,15 @@ type CurlRes struct {
 	Took     int  `json:"took"`
 	Time_out bool `time_out`
 	_shards  interface{}
-	Hits     interface{} `hits`
+	Hits     HitsOuter `json:"hits"`
 }
+
+type HitsOuter struct {
+	Total int       `json:"total"`
+	Hits  HitsInner `json:"hits"`
+}
+
+type HitsInner interface{}
 
 func Cli(nodes []string, port string) {
 	var err error
@@ -60,7 +67,8 @@ func Query(body string) string {
 
 	json.Unmarshal(result, &curlRes)
 
-	fmt.Println(curlRes.Hits)
+	fmt.Println(curlRes.Hits.Total)
+	fmt.Println(curlRes.Hits.Hits)
 
 	return string(result)
 }
