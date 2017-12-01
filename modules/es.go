@@ -44,7 +44,7 @@ func Cli(nodes []string, port string) {
 
 func Query(body string) string {
 	b := bytes.NewBuffer([]byte(body))
-	res, err := http.Post("10.88.1.102:9200/apt/_search", "application/json;charset=utf-8", b)
+	res, err := http.Post("http://10.88.1.102:9200/apt/_search", "application/json;charset=utf-8", b)
 	if err != nil {
 		log.Fatal(err)
 		return ""
@@ -105,7 +105,7 @@ func EsRes(p *Params, e *tree.Expr) string {
 	}
 
 	bytes, _ := json.Marshal(curlBody)
-	Log("INF", "es query exe: %s")
+	Log("INF", "es query exe: %s", string(bytes))
 
 	return Query(string(bytes))
 }
