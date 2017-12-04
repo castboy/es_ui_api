@@ -31,6 +31,15 @@ type CurlBody struct {
 	From  int         `json:"from"`
 	Size  int         `json:"size"`
 	Query interface{} `json:"query"`
+	Sort  `json:"sort"`
+}
+
+type Sort struct {
+	Time Order `TimeAppend`
+}
+
+type Order struct {
+	Order string `json:"order"`
 }
 
 type CurlRes struct {

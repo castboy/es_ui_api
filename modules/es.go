@@ -101,6 +101,11 @@ func EsRes(p *Params, e *tree.Expr) ([]byte, error) {
 		From:  p.From,
 		Size:  p.Size,
 		Query: i,
+		Sort: Sort{
+			Time: Order{
+				Order: "desc",
+			},
+		},
 	}
 
 	bytes, _ := json.Marshal(curlBody)
