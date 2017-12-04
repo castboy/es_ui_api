@@ -35,7 +35,7 @@ type CurlBody struct {
 }
 
 type Sort struct {
-	Time Order `TimeAppend`
+	Time Order `json:"TimeAppend"`
 }
 
 type Order struct {
