@@ -252,6 +252,10 @@ func ResLast(result []byte) Res {
 		}
 	}
 
+	if curlRes.Hits.Total > MaxResNum {
+		curlRes.Hits.Total = 10000
+	}
+
 	return ResStruct(curlRes.Hits.Total, res, 0)
 }
 

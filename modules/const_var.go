@@ -42,6 +42,8 @@ var EsType = [TypeEnd]string{
 	Multi: "",
 }
 
+var MaxResNum int64 = 10000
+
 var WafItems = []string{
 	"Client",
 	"Rev",
