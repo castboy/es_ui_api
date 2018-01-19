@@ -61,12 +61,12 @@ type UiAggs struct {
 	Data AggsData `code`
 }
 type AggsData struct {
-	Type  map[string]int64 `time`
-	Time  map[string]int64 `time`
-	SrcCY map[string]int64 `srcVY`
-	DPort map[string]int64 `dPort`
-	Prot  map[string]int64 `prot`
-	Os    map[string]int64 `prot`
+	Type  map[string]int64 `json:"type"`
+	Time  map[string]int64 `json:"time"`
+	SrcCY map[string]int64 `json:"srcCY"`
+	DPort map[string]int64 `json:"dPort"`
+	Prot  map[string]int64 `json:"prot"`
+	Os    map[string]int64 `json:"os"`
 }
 
 func AggsBody() string {
