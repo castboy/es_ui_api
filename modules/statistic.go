@@ -57,8 +57,8 @@ type TimeBucket struct {
 }
 
 type UiAggs struct {
-	Code int      `code`
-	Data AggsData `code`
+	Code int      `json:"code"`
+	Data AggsData `json:"code"`
 }
 type AggsData struct {
 	Type  map[string]int64 `json:"type"`
