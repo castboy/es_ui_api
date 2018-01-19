@@ -75,12 +75,17 @@ func AggsBody() string {
 
 func BaseElmt(base Base) map[string]int64 {
 	var m = make(map[string]int64)
-	for _, v := range base.Buckets {
-		m[v.Key] = v.Count
-	}
 
 	if 0 != base.Other {
 		m["other"] = base.Other
+	}
+
+	for _, v := range base.Buckets {
+		if "" == v.Key {
+			m["other"] += v.Count
+		} else {
+			m[v.Key] = v.Count
+		}
 	}
 
 	return m
