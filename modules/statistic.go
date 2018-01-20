@@ -3,11 +3,7 @@ package modules
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 type AggsRes struct {
@@ -70,7 +66,7 @@ type AggsData struct {
 }
 
 func AggsBody() string {
-	return `{"size":0,"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM"}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country"}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport"}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend"}}}},"os":{"terms":{"field":"Local_platfrom"}}}}`
+	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM"}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country"}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport"}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend"}}}},"os":{"terms":{"field":"Local_platfrom"}}}`
 }
 
 func BaseElmt(base Base) map[string]int64 {
@@ -142,13 +138,15 @@ func UiStat(b []byte) string {
 	return string(b)
 }
 
-func Stat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	b, err := Query(AggsBody())
+func Stat(query string) (string, error) {
+	aggsBody := fmt.Sprintf(`{"size": 0, "query": %s, %s}`, query, AggsBody())
+
+	b, err := Query(aggsBody)
 	if nil != err {
-		io.WriteString(w, `{"code": 400, "data": null}`)
 		Log("ERR", "statistic res: %s", `{"code": 400, "data": null}`)
-	} else {
-		io.WriteString(w, UiStat(b))
+		return `{"code": 400, "data": null}`, err
 	}
+
+	return UiStat(b), nil
 
 }

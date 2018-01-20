@@ -263,38 +263,60 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var res Res
 
 	p, err := ParseReq(r)
-	if nil != err {
-		res = ResStruct(0, nil, WRONG)
-	} else {
-		e, err := RecoverLineExpr(p)
-		if nil == e {
-			switch err {
-			case ErrExprType[NOT_CLOSE_QUOTES_SINGLE]:
-				res = ResStruct(0, nil, NOT_CLOSE_QUOTES_SINGLE)
-			case ErrExprType[NOT_CLOSE_QUOTES_DOUBLE]:
-				res = ResStruct(0, nil, NOT_CLOSE_QUOTES_DOUBLE)
-			case ErrExprType[NOT_FOUND_QUOTES_SINGLE_NEXT]:
-				res = ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
-			case ErrExprType[TOKEN_IS_NOT_EXPRESS]:
-				res = ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
-			case ErrExprType[NOT_CLOSE_PARENTHESIS]:
-				res = ResStruct(0, nil, NOT_CLOSE_PARENTHESIS)
-			default:
-				res = ResStruct(0, nil, ERR_EXPRESS)
-			}
+	if 0 != p.Size {
+		if nil != err {
+			res = ResStruct(0, nil, WRONG)
 		} else {
-			bytes, err := EsRes(p, e)
-			if nil != err {
-				Log("ERR", "%s", "CurlEs res.Body")
+			e, err := RecoverLineExpr(p)
+			if nil == e {
+				switch err {
+				case ErrExprType[NOT_CLOSE_QUOTES_SINGLE]:
+					res = ResStruct(0, nil, NOT_CLOSE_QUOTES_SINGLE)
+				case ErrExprType[NOT_CLOSE_QUOTES_DOUBLE]:
+					res = ResStruct(0, nil, NOT_CLOSE_QUOTES_DOUBLE)
+				case ErrExprType[NOT_FOUND_QUOTES_SINGLE_NEXT]:
+					res = ResStruct(0, nil, NOT_FOUND_QUOTES_SINGLE_NEXT)
+				case ErrExprType[TOKEN_IS_NOT_EXPRESS]:
+					res = ResStruct(0, nil, TOKEN_IS_NOT_EXPRESS)
+				case ErrExprType[NOT_CLOSE_PARENTHESIS]:
+					res = ResStruct(0, nil, NOT_CLOSE_PARENTHESIS)
+				default:
+					res = ResStruct(0, nil, ERR_EXPRESS)
+				}
 			} else {
-				res = ResLast(bytes)
+				bytes, err := EsRes(p, e)
+				if nil != err {
+					Log("ERR", "%s", "CurlEs res.Body")
+				} else {
+					res = ResLast(bytes)
+				}
 			}
 		}
+
+		s := ApiRes(res)
+
+		io.WriteString(w, *s)
+
+		Log("INF", "query res: %s", *s)
+	} else {
+		e, _ := RecoverLineExpr(p)
+		if nil == e {
+			io.WriteString(w, `{"code":400, "data":null}`)
+			return
+		}
+
+		body := Expr(e)
+		i, _ := body.Source()
+
+		b, _ := json.Marshal(i)
+
+		s, err2 := Stat(string(b))
+		if nil != err2 {
+			io.WriteString(w, `{"code":400, "data":null}`)
+		} else {
+			io.WriteString(w, s)
+		}
+
 	}
 
-	s := ApiRes(res)
-
-	io.WriteString(w, *s)
-
-	Log("INF", "query res: %s", *s)
 }
