@@ -163,7 +163,7 @@ func Stat(query string) (string, error) {
 
 	b, err := Query(aggsBody)
 	if nil != err {
-		Log("ERR", "statistic res: %s", `{"code": 400, "data": null}`)
+		Log("ERR", "statistic res: %s", `{"code": 400, "data": {"type":[], "time":[], "srcCY":[], "dPort":[], "prot":[], "os":[]}}`)
 		return `{"code": 400, "data": null}`, err
 	}
 
