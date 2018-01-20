@@ -57,60 +57,80 @@ type UiAggs struct {
 	Data AggsData `json:"data"`
 }
 type AggsData struct {
-	Type  map[string]int64 `json:"type"`
-	Time  map[string]int64 `json:"time"`
-	SrcCY map[string]int64 `json:"srcCY"`
-	DPort map[string]int64 `json:"dPort"`
-	Prot  map[string]int64 `json:"prot"`
-	Os    map[string]int64 `json:"os"`
+	Type  []map[string]int64 `json:"type"`
+	Time  []map[string]int64 `json:"time"`
+	SrcCY []map[string]int64 `json:"srcCY"`
+	DPort []map[string]int64 `json:"dPort"`
+	Prot  []map[string]int64 `json:"prot"`
+	Os    []map[string]int64 `json:"os"`
 }
 
 func AggsBody() string {
 	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM"}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country"}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport"}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend"}}}},"os":{"terms":{"field":"Local_platfrom"}}}`
 }
 
-func BaseElmt(base Base) map[string]int64 {
-	var m = make(map[string]int64)
+func BaseElmt(base Base) []map[string]int64 {
+	var s = make([]map[string]int64, 0)
 
 	if 0 != base.Other {
+		var m = make(map[string]int64)
 		m["other"] = base.Other
+		s = append(s, m)
 	}
 
 	for _, v := range base.Buckets {
+		var m = make(map[string]int64)
 		if "" == v.Key {
-			m["other"] += v.Count
+			if 0 != base.Other {
+				s[0]["other"] += v.Count
+			} else {
+				m["other"] += v.Count
+				s = append(s, m)
+			}
+
 		} else {
 			m[v.Key] = v.Count
+			s = append(s, m)
 		}
 	}
 
-	return m
+	return s
 }
 
-func TimeBaseElmt(base TimeBase) map[string]int64 {
-	var m = make(map[string]int64)
+func TimeBaseElmt(base TimeBase) []map[string]int64 {
+	var s = make([]map[string]int64, 0)
+
 	for _, v := range base.Buckets {
+		var m = make(map[string]int64)
 		m[v.Key] = v.Count
+		s = append(s, m)
 	}
 
 	if 0 != base.Other {
+		var m = make(map[string]int64)
 		m["other"] = base.Other
+		s = append(s, m)
 	}
 
-	return m
+	return s
 }
 
-func DportBaseElmt(base DPortBase) map[string]int64 {
-	var m = make(map[string]int64)
+func DportBaseElmt(base DPortBase) []map[string]int64 {
+	var s = make([]map[string]int64, 0)
+
 	for _, v := range base.Buckets {
+		var m = make(map[string]int64)
 		m[strconv.Itoa(v.Key)] = v.Count
+		s = append(s, m)
 	}
 
 	if 0 != base.Other {
+		var m = make(map[string]int64)
 		m["other"] = base.Other
+		s = append(s, m)
 	}
 
-	return m
+	return s
 }
 
 func UiStat(b []byte) string {
