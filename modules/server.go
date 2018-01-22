@@ -305,7 +305,7 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		e, _ := RecoverLineExpr(p)
 		if nil == e {
-			io.WriteString(w, `{"code":400, "data":null}`)
+			io.WriteString(w, `{"code":400, "data":""}`)
 			return
 		}
 
@@ -316,7 +316,7 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 		s, err2 := Stat(string(b))
 		if nil != err2 {
-			io.WriteString(w, `{"code": 400, "data": {"type":[], "time":[], "srcCY":[], "dPort":[], "prot":[], "os":[]}}`)
+			io.WriteString(w, `{"code": 400, "data": ""`)
 		} else {
 			io.WriteString(w, s)
 		}
