@@ -29,6 +29,9 @@ type ResWaf struct {
 	Operators string
 	Type      string
 	ConnInfo
+
+	HttpReq string
+	HttpRes string
 }
 
 type ResVds struct {
@@ -118,11 +121,22 @@ type BackendObj struct {
 	TimeAppend string
 	Conn       Conn_backend `json:Conn`
 	Http       struct {
-		Url string `json:Url`
+		Url              string `json:Url`
+		RequestLocation  LocationHdfs
+		ResponseLocation LocationHdfs
 	}
 	App struct {
 		File string `json:"File"`
 	} `json:"App"`
+}
+
+type LocationHdfs struct {
+	Signature string
+	Size      int
+	Offset    int64
+	File      string
+	ReqCont   string
+	ResCont   string
 }
 
 type Conn_backend struct {

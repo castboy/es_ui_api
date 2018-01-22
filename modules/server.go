@@ -149,6 +149,9 @@ func ApiResWaf(b []byte) interface{} {
 		},
 		Operators: "",
 		Type:      "waf",
+
+		HttpReq: src.Xdr[0].Http.RequestLocation.ReqCont,
+		HttpRes: src.Xdr[0].Http.ResponseLocation.ResCont,
 	}
 
 	return resWaf
