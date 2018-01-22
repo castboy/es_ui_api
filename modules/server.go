@@ -312,7 +312,7 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 		s, err2 := Stat(string(b))
 		if nil != err2 {
-			io.WriteString(w, `{"code":400, "data":null}`)
+			io.WriteString(w, `{"code": 400, "data": {"type":[], "time":[], "srcCY":[], "dPort":[], "prot":[], "os":[]}}`)
 		} else {
 			io.WriteString(w, s)
 		}
