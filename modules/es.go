@@ -15,10 +15,16 @@ import (
 
 var EsClient *elastic.Client
 var NodesSlice []string
+var EsIndex string
 
 func Nodes(nodes []string) {
 	NodesSlice = nodes
 }
+
+func GetEsIndex(idx string) {
+	EsIndex = idx
+}
+
 func Cli(nodes []string, port string) {
 	var err error
 	var nodePort []string
@@ -39,13 +45,13 @@ func Query(body string) ([]byte, error) {
 	var result []byte
 
 	b := bytes.NewBuffer([]byte(body))
-	res, err = http.Post("http://"+NodesSlice[0]+":9200/apt/_search", "application/json;charset=utf-8", b)
+	res, err = http.Post("http://"+NodesSlice[0]+":9200/"+EsIndex+"/_search", "application/json;charset=utf-8", b)
 	if err != nil {
 		Log("ERR", "node can not run: %", NodesSlice[0])
-		res, err = http.Post("http://"+NodesSlice[1]+":9200/apt/_search", "application/json;charset=utf-8", b)
+		res, err = http.Post("http://"+NodesSlice[1]+":9200/"+EsIndex+"/_search", "application/json;charset=utf-8", b)
 		if err != nil {
 			Log("ERR", "node can not run: %", NodesSlice[1])
-			res, err = http.Post("http://"+NodesSlice[2]+":9200/apt/_search", "application/json;charset=utf-8", b)
+			res, err = http.Post("http://"+NodesSlice[2]+":9200/"+EsIndex+"/_search", "application/json;charset=utf-8", b)
 			if nil != err {
 				Log("CRT", "%s", "all es node can not run")
 			}
