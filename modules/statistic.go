@@ -135,27 +135,29 @@ func DportBaseElmt(base DPortBase) []map[string]int64 {
 
 func UiStat(b []byte) string {
 	var res AggsRes
+	var s string
 
 	json.Unmarshal(b, &res)
 
-	uiAggs := UiAggs{
-		Code: 200,
-		Data: AggsData{
-			Type:  BaseElmt(res.Type),
-			Time:  TimeBaseElmt(res.Time),
-			Os:    BaseElmt(res.Os),
-			Prot:  BaseElmt(res.Prot.Base),
-			SrcCY: BaseElmt(res.SrcCY.Base),
-			DPort: DportBaseElmt(res.Dport.DPortBase),
-		},
+	if 0 == len(res.Type.Buckets) {
+		s = `{"code": 200, "data": ""}`
+	} else {
+		uiAggs := UiAggs{
+			Code: 200,
+			Data: AggsData{
+				Type:  BaseElmt(res.Type),
+				Time:  TimeBaseElmt(res.Time),
+				Os:    BaseElmt(res.Os),
+				Prot:  BaseElmt(res.Prot.Base),
+				SrcCY: BaseElmt(res.SrcCY.Base),
+				DPort: DportBaseElmt(res.Dport.DPortBase),
+			},
+		}
+		byte, _ := json.Marshal(uiAggs)
+		s = string(byte)
 	}
 
-	b, err := json.Marshal(uiAggs)
-	if nil != err {
-		fmt.Println("marshal err")
-	}
-
-	return string(b)
+	return s
 }
 
 func Stat(query string) (string, error) {
