@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -81,7 +82,7 @@ func (p *Params) ParseQuery() *Params {
 
 		return p
 	}
-	p.Query = string(s)
+	p.Query = strings.ToLower(string(s))
 	Log("INF", "query is: %s", p.Query)
 
 	return p
