@@ -83,8 +83,8 @@ func (p *Params) ParseQuery() *Params {
 		return p
 	}
 	p.Query = strings.ToLower(string(s))
-	p.Query = strings.Resplace(p.Query, "dprt==未知", "dprt==0", -1)
-	p.Query = strings.Resplace(p.Query, "dprt=未知", "dprt=0", -1)
+	p.Query = strings.Replace(p.Query, "dprt==未知", "dprt==0", -1)
+	p.Query = strings.Replace(p.Query, "dprt=未知", "dprt=0", -1)
 
 	Log("INF", "query is: %s", p.Query)
 
