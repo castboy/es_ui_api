@@ -127,6 +127,9 @@ func ApiResWaf(b []byte) interface{} {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
+	src.Xdr[0].Conn.DipInfo.Country = FormatCountry(src.Xdr[0].Conn.DipInfo.Country)
+	src.Xdr[0].Conn.SipInfo.Country = FormatCountry(src.Xdr[0].Conn.SipInfo.Country)
+
 	resWaf := ResWaf{
 		Client:    src.Client,
 		Rev:       src.Rev,
@@ -169,6 +172,9 @@ func ApiResVds(b []byte) interface{} {
 		fmt.Println("Unmarshal WafSource err")
 	}
 
+	src.Xdr[0].Conn.DipInfo.Country = FormatCountry(src.Xdr[0].Conn.DipInfo.Country)
+	src.Xdr[0].Conn.SipInfo.Country = FormatCountry(src.Xdr[0].Conn.SipInfo.Country)
+
 	resVds := ResVds{
 		Subfile:          src.Subfile,
 		Threatname:       src.Threatname,
@@ -204,6 +210,9 @@ func ApiResIds(b []byte) interface{} {
 	if nil != err {
 		fmt.Println("Unmarshal WafSource err")
 	}
+
+	src.Xdr[0].Conn.DipInfo.Country = FormatCountry(src.Xdr[0].Conn.DipInfo.Country)
+	src.Xdr[0].Conn.SipInfo.Country = FormatCountry(src.Xdr[0].Conn.SipInfo.Country)
 
 	resIds := ResIds{
 		Time:     src.Xdr[0].TimeAppend,
@@ -327,4 +336,12 @@ func Server(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	}
 
+}
+
+func FormatCountry(s string) string {
+	if "亚太互联网络信息中心(未知)" == s {
+		return "未知"
+	}
+
+	return s
 }
