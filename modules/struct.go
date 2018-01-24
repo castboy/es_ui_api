@@ -7,7 +7,7 @@ type ResIds struct {
 	Severity    string
 	Engine      string
 	Type        string
-	ResConnInfo `json:"ConnInfo"`
+	ResConnInfo 
 }
 
 type ResWaf struct {
@@ -28,7 +28,7 @@ type ResWaf struct {
 	Version     string
 	Operators   string
 	Type        string
-	ResConnInfo `json:"ConnInfo"`
+	ResConnInfo 
 
 	HttpReq string
 	HttpRes string
@@ -49,7 +49,7 @@ type ResVds struct {
 	HttpUrl          string
 	Filepath         string
 	Type             string
-	ResConnInfo      `json:"ConnInfo"`
+	ResConnInfo     
 }
 
 type SrcVds struct {
