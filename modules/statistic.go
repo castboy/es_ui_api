@@ -3,6 +3,7 @@ package modules
 import (
 	"encoding/json"
 	"fmt"
+        "strconv"
 )
 
 type AggsRes struct {
@@ -13,7 +14,7 @@ type Aggregations struct {
 	Type  Base            `json:"type"`
 	Time  TimeBase        `json:"time"`
 	Os    Base            `json:"os"`
-	Prot  NestedBase      `json"prot"`
+	Prot  NestedBase      `json:"prot"`
 	SrcCY NestedBase      `json:"srcCY"`
 	Dport DPortNestedBase `json:"dPort"`
 }
@@ -23,9 +24,12 @@ type DPortNestedBase struct {
 }
 type DPortBase struct {
 	Other   int64    `json:"sum_other_doc_count"`
-	Buckets []Bucket `json:"buckets"`
+	Buckets []DPortBucket `json:"buckets"`
 }
-
+type DPortBucket struct {
+        Key   int   `json:"key"`
+        Count int64 `json:"doc_count"`
+}
 type NestedBase struct {
 	Base `json:"innerBase"`
 }
@@ -61,7 +65,7 @@ type AggsData struct {
 }
 
 func AggsBody() string {
-	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM", "size":6}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country", "size":250}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport", "size":65536}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend", "size":100}}}},"os":{"terms":{"field":"Local_platfrom", "size":20}}}`
+	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM"}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country", "size": 250}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport", "size":65536}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend", "size": 500}}}},"os":{"terms":{"field":"Local_platfrom"}}}`
 }
 
 func BaseElmt(base Base) []map[string]int64 {
@@ -98,11 +102,11 @@ func DportBaseElmt(base DPortBase) []map[string]int64 {
 
 	for _, v := range base.Buckets {
 		var m = make(map[string]int64)
-		if "" == v.Key {
+		if 0 == v.Key {
 			m["未知"] += v.Count
 			s = append(s, m)
 		} else {
-			m[v.Key] = v.Count
+			m[strconv.Itoa(v.Key)] = v.Count
 			s = append(s, m)
 		}
 	}
@@ -115,7 +119,9 @@ func UiStat(b []byte) string {
 	var s string
 
 	json.Unmarshal(b, &res)
+        fmt.Println(res)
 
+        
 	if 0 == len(res.Type.Buckets) {
 		s = `{"code": 200, "data": ""}`
 	} else {
