@@ -1,34 +1,34 @@
 package modules
 
 type ResIds struct {
-	Time     string
-	Attack   string
-	Details  string
-	Severity string
-	Engine   string
-	Type     string
-	ConnInfo
+	Time        string
+	Attack      string
+	Details     string
+	Severity    string
+	Engine      string
+	Type        string
+	ResConnInfo `json:"ConnInfo"`
 }
 
 type ResWaf struct {
-	Time      string
-	Client    string
-	Rev       string
-	Msg       string
-	Attack    string
-	Severity  string
-	Maturity  int32
-	Accuracy  int32
-	Hostname  string
-	Uri       string
-	Unique_id string
-	Ref       string
-	Tags      []string
-	Rule      WafAlertRule
-	Version   string
-	Operators string
-	Type      string
-	ConnInfo
+	Time        string
+	Client      string
+	Rev         string
+	Msg         string
+	Attack      string
+	Severity    string
+	Maturity    int32
+	Accuracy    int32
+	Hostname    string
+	Uri         string
+	Unique_id   string
+	Ref         string
+	Tags        []string
+	Rule        WafAlertRule
+	Version     string
+	Operators   string
+	Type        string
+	ResConnInfo `json:"ConnInfo"`
 
 	HttpReq string
 	HttpRes string
@@ -49,7 +49,7 @@ type ResVds struct {
 	HttpUrl          string
 	Filepath         string
 	Type             string
-	ConnInfo
+	ResConnInfo      `json:"ConnInfo"`
 }
 
 type SrcVds struct {
@@ -107,6 +107,17 @@ type SrcIds struct {
 	Engine         string
 	Xdr            []BackendObj
 }
+
+type ResConnInfo struct {
+	Src_ip       string
+	Src_port     uint32
+	Src_ip_info  IpInfo
+	Dest_ip      string
+	Dest_port    string
+	Dest_ip_info IpInfo
+	Proto        string
+}
+
 type ConnInfo struct {
 	Src_ip       string
 	Src_port     uint32

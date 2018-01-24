@@ -3,7 +3,6 @@ package modules
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 )
 
 type AggsRes struct {
@@ -23,12 +22,8 @@ type DPortNestedBase struct {
 	DPortBase `json:"innerBase"`
 }
 type DPortBase struct {
-	Other   int64         `json:"sum_other_doc_count"`
-	Buckets []DPortBucket `json:"buckets"`
-}
-type DPortBucket struct {
-	Key   int   `json:"key"`
-	Count int64 `json:"doc_count"`
+	Other   int64    `json:"sum_other_doc_count"`
+	Buckets []Bucket `json:"buckets"`
 }
 
 type NestedBase struct {
@@ -66,28 +61,17 @@ type AggsData struct {
 }
 
 func AggsBody() string {
-	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM"}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country"}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport"}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend"}}}},"os":{"terms":{"field":"Local_platfrom"}}}`
+	return `"aggs":{"type":{"terms":{"field":"Type"}},"time":{"date_histogram":{"field":"TimeAppend","interval":"month","format":"yyyy-MM", "size":6}},"srcCY":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.SipInfo.Country", "size":250}}}},"dPort":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.Dport", "size":65536}}}},"prot":{"nested":{"path":"Xdr"},"aggs":{"innerBase":{"terms":{"field":"Xdr.Conn.ProtoAppend", "size":100}}}},"os":{"terms":{"field":"Local_platfrom", "size":20}}}`
 }
 
 func BaseElmt(base Base) []map[string]int64 {
 	var s = make([]map[string]int64, 0)
 
-	if 0 != base.Other {
-		var m = make(map[string]int64)
-		m["other"] = base.Other
-		s = append(s, m)
-	}
-
 	for _, v := range base.Buckets {
 		var m = make(map[string]int64)
 		if "" == v.Key {
-			if 0 != base.Other {
-				s[0]["other"] += v.Count
-			} else {
-				m["other"] += v.Count
-				s = append(s, m)
-			}
-
+			m["未知"] += v.Count
+			s = append(s, m)
 		} else {
 			m[v.Key] = v.Count
 			s = append(s, m)
@@ -106,12 +90,6 @@ func TimeBaseElmt(base TimeBase) []map[string]int64 {
 		s = append(s, m)
 	}
 
-	if 0 != base.Other {
-		var m = make(map[string]int64)
-		m["other"] = base.Other
-		s = append(s, m)
-	}
-
 	return s
 }
 
@@ -120,14 +98,13 @@ func DportBaseElmt(base DPortBase) []map[string]int64 {
 
 	for _, v := range base.Buckets {
 		var m = make(map[string]int64)
-		m[strconv.Itoa(v.Key)] = v.Count
-		s = append(s, m)
-	}
-
-	if 0 != base.Other {
-		var m = make(map[string]int64)
-		m["other"] = base.Other
-		s = append(s, m)
+		if "" == v.Key {
+			m["未知"] += v.Count
+			s = append(s, m)
+		} else {
+			m[v.Key] = v.Count
+			s = append(s, m)
+		}
 	}
 
 	return s

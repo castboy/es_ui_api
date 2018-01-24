@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
@@ -142,10 +143,10 @@ func ApiResWaf(b []byte) interface{} {
 		Rule:      src.Rule,
 		Version:   src.Version,
 		Time:      src.Xdr[0].TimeAppend,
-		ConnInfo: ConnInfo{
+		ResConnInfo: ResConnInfo{
 			Proto:        src.Xdr[0].Conn.ProtoAppend,
 			Dest_ip:      src.Xdr[0].Conn.Dip,
-			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_port:    strconv.Itoa(int(src.Xdr[0].Conn.Dport)),
 			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
 			Src_ip:       src.Xdr[0].Conn.Sip,
 			Src_port:     src.Xdr[0].Conn.Sport,
@@ -182,10 +183,10 @@ func ApiResVds(b []byte) interface{} {
 		Time:             src.Xdr[0].TimeAppend,
 		HttpUrl:          src.Xdr[0].Http.Url,
 		Filepath:         src.Xdr[0].App.File,
-		ConnInfo: ConnInfo{
+		ResConnInfo: ResConnInfo{
 			Proto:        src.Xdr[0].Conn.ProtoAppend,
 			Dest_ip:      src.Xdr[0].Conn.Dip,
-			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_port:    strconv.Itoa(int(src.Xdr[0].Conn.Dport)),
 			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
 			Src_ip:       src.Xdr[0].Conn.Sip,
 			Src_port:     src.Xdr[0].Conn.Sport,
@@ -210,12 +211,12 @@ func ApiResIds(b []byte) interface{} {
 		Details:  "",
 		Severity: src.SeverityAppend,
 		Engine:   src.Engine,
-		ConnInfo: ConnInfo{
+		ResConnInfo: ResConnInfo{
 			Src_ip:       src.Xdr[0].Conn.Sip,
 			Src_port:     src.Xdr[0].Conn.Sport,
 			Src_ip_info:  src.Xdr[0].Conn.SipInfo,
 			Dest_ip:      src.Xdr[0].Conn.Dip,
-			Dest_port:    src.Xdr[0].Conn.Dport,
+			Dest_port:    strconv.Itoa(int(src.Xdr[0].Conn.Dport)),
 			Dest_ip_info: src.Xdr[0].Conn.DipInfo,
 			Proto:        src.Xdr[0].Conn.ProtoAppend,
 		},
