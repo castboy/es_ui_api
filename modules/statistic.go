@@ -119,7 +119,6 @@ func UiStat(b []byte) string {
 	var s string
 
 	json.Unmarshal(b, &res)
-	fmt.Println(res)
 
 	if 0 == len(res.Type.Buckets) {
 		s = `{"code": 200, "data": ""}`

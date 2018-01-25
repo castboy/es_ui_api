@@ -124,6 +124,7 @@ func ApiResWaf(b []byte) interface{} {
 	var src SrcWaf
 	err := json.Unmarshal(b, &src)
 	if nil != err {
+		fmt.Println(string(b), err.Error())
 		fmt.Println("Unmarshal WafSource err")
 	}
 
@@ -169,7 +170,8 @@ func ApiResVds(b []byte) interface{} {
 	var src SrcVds
 	err := json.Unmarshal(b, &src)
 	if nil != err {
-		fmt.Println("Unmarshal WafSource err")
+		fmt.Println(string(b), err.Error())
+		fmt.Println("Unmarshal VdsSource err")
 	}
 
 	src.Xdr[0].Conn.DipInfo.Country = FormatCountry(src.Xdr[0].Conn.DipInfo.Country)
@@ -208,7 +210,8 @@ func ApiResIds(b []byte) interface{} {
 	var src SrcIds
 	err := json.Unmarshal(b, &src)
 	if nil != err {
-		fmt.Println("Unmarshal WafSource err")
+		fmt.Println(string(b), err.Error())
+		fmt.Println("Unmarshal IdsSource err")
 	}
 
 	src.Xdr[0].Conn.DipInfo.Country = FormatCountry(src.Xdr[0].Conn.DipInfo.Country)
