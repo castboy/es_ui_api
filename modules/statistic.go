@@ -3,7 +3,7 @@ package modules
 import (
 	"encoding/json"
 	"fmt"
-        "strconv"
+	"strconv"
 )
 
 type AggsRes struct {
@@ -23,12 +23,12 @@ type DPortNestedBase struct {
 	DPortBase `json:"innerBase"`
 }
 type DPortBase struct {
-	Other   int64    `json:"sum_other_doc_count"`
+	Other   int64         `json:"sum_other_doc_count"`
 	Buckets []DPortBucket `json:"buckets"`
 }
 type DPortBucket struct {
-        Key   int   `json:"key"`
-        Count int64 `json:"doc_count"`
+	Key   int   `json:"key"`
+	Count int64 `json:"doc_count"`
 }
 type NestedBase struct {
 	Base `json:"innerBase"`
@@ -73,7 +73,7 @@ func BaseElmt(base Base) []map[string]int64 {
 
 	for _, v := range base.Buckets {
 		var m = make(map[string]int64)
-		if "" == v.Key {
+		if "" == v.Key || "亚太互联网络信息中心(未知)" == v.Key {
 			m["未知"] += v.Count
 			s = append(s, m)
 		} else {
@@ -119,9 +119,8 @@ func UiStat(b []byte) string {
 	var s string
 
 	json.Unmarshal(b, &res)
-        fmt.Println(res)
+	fmt.Println(res)
 
-        
 	if 0 == len(res.Type.Buckets) {
 		s = `{"code": 200, "data": ""}`
 	} else {
