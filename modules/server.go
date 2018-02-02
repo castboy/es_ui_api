@@ -3,12 +3,14 @@ package modules
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -70,6 +72,16 @@ type ResHitsType struct {
 	Type string
 }
 
+type QueryInfo struct {
+	Last LastQuery
+}
+type LastQuery struct {
+	Cont string
+	Time int64
+}
+
+var query QueryInfo
+
 func (p *Params) ParseEsType() *Params {
 
 	return p
@@ -86,6 +98,17 @@ func (p *Params) ParseQuery() *Params {
 	p.Query = strings.ToLower(string(s))
 	p.Query = strings.Replace(p.Query, "dprt==未知", "dprt==0", -1)
 	p.Query = strings.Replace(p.Query, "dprt=未知", "dprt=0", -1)
+
+	if "" == p.Query {
+		p.Err = errors.New("query cont is null")
+	}
+
+	if p.Query != query.Last.Cont {
+		query.Last.Time = time.Now().UnixNano() / 1000000
+		query.Last.Cont = p.Query
+	}
+
+	p.Query = fmt.Sprintf("%s && mS<=%d", p.Query, query.Last.Time)
 
 	Log("INF", "query is: %s", p.Query)
 
