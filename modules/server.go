@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -87,6 +88,30 @@ func (p *Params) ParseEsType() *Params {
 	return p
 }
 
+func IsMonthSearch(s string) bool {
+	date := "^2\\d{3}-(0[1-9]|1[0-2])$"
+	is, err := regexp.MatchString(date, s)
+	if nil == err && is {
+		return true
+	}
+
+	return false
+}
+
+func MonthParse(s string) string {
+	date := strings.Split(s, "-")
+	if date[1] == "12" {
+		year, _ := strconv.Atoi(date[0])
+		year++
+
+		return fmt.Sprintf("date<%d-01-01 && date>=%s-%s-01", year, date[0], date[1])
+	} else {
+		month, _ := strconv.Atoi(date[1])
+		month++
+		return fmt.Sprintf("date<%s-%d-01 && date>=%s-%s-01", date[0], month, date[0], date[1])
+	}
+}
+
 func (p *Params) ParseQuery() *Params {
 	s, err := base64.StdEncoding.DecodeString(p.Query)
 	if nil != err {
@@ -98,6 +123,10 @@ func (p *Params) ParseQuery() *Params {
 	p.Query = strings.ToLower(string(s))
 	p.Query = strings.Replace(p.Query, "dprt==未知", "dprt==0", -1)
 	p.Query = strings.Replace(p.Query, "dprt=未知", "dprt=0", -1)
+
+	if IsMonthSearch(p.Query) {
+		p.Query = MonthParse(p.Query)
+	}
 
 	if "" == p.Query {
 		p.Err = errors.New("query cont is null")
